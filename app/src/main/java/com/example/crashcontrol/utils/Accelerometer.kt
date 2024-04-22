@@ -4,25 +4,29 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import com.example.crashcontrol.ui.screens.debug.DebugViewModel
+
+data class AccelerometerValues(
+    val x: Float = 0f,
+    val y: Float = 0f,
+    val z: Float = 0f
+) {}
 
 class Accelerometer(private var sensorManager: SensorManager) : SensorEventListener {
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-    private val accelVals = DebugViewModel.AccelerometerValues
+    var values = AccelerometerValues()
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-            val xValue = event.values[0]
-            val yValue = event.values[1]
-            val zValue = event.values[2]
-            accelVals.x.floatValue = xValue
-            accelVals.y.floatValue = yValue
-            accelVals.z.floatValue = zValue
+            values = AccelerometerValues(
+                x = event.values[0],
+                y = event.values[1],
+                z = event.values[2]
+            )
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Non utilizzato in questo esempio
+        // Non utilizzato
     }
 
     fun subscribe() {
