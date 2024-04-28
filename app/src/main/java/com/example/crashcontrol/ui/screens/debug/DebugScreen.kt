@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,18 +16,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.crashcontrol.utils.Accelerometer
-import com.example.crashcontrol.utils.AccelerometerValues
+import com.example.crashcontrol.utils.AccelerometerService
 import kotlinx.coroutines.delay
 
 @Composable
-fun DebugScreen(accelerometer: Accelerometer?) {
-    var values by remember { mutableStateOf(AccelerometerValues()) }
+fun DebugScreen(accelerometer: AccelerometerService) {
+    var values = accelerometer.values
 
     LaunchedEffect(accelerometer) {
         val updateInterval = 1000L // Aggiorna ogni secondo
         while (true) {
-            values = accelerometer?.values ?: values
+            values = accelerometer.values
             delay(updateInterval)
         }
     }

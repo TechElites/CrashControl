@@ -1,7 +1,5 @@
 package com.example.crashcontrol
 
-import android.content.Context
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,14 +9,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.crashcontrol.ui.screens.debug.DebugScreen
 import com.example.crashcontrol.ui.theme.CrashControlTheme
-import com.example.crashcontrol.utils.Accelerometer
+import com.example.crashcontrol.utils.AccelerometerService
+import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
-    private var accelerometer: Accelerometer? = null
+    private lateinit var accelerometer: AccelerometerService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        accelerometer = Accelerometer(getSystemService(Context.SENSOR_SERVICE) as SensorManager)
+
+        accelerometer = get<AccelerometerService>()
+
         setContent {
             CrashControlTheme {
                 Surface(
@@ -33,11 +34,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        accelerometer?.subscribe()
+        accelerometer.subscribe()
     }
 
     override fun onPause() {
         super.onPause()
-        accelerometer?.unsubscribe()
+        accelerometer.unsubscribe()
     }
 }
