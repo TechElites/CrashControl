@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.crashcontrol.ui.screens.debug.DebugScreen
+import com.example.crashcontrol.ui.screens.home.HomeScreen
 import com.example.crashcontrol.utils.AccelerometerService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -63,7 +64,7 @@ fun CrashControlNavGraph(
     ) {
         with(CrashControlRoute.Home) {
             composable(route) {
-//                HomeScreen(placesState, navController)
+                HomeScreen(placesState, navController)
             }
         }
         with(CrashControlRoute.CrashDetails) {
