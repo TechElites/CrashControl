@@ -23,16 +23,19 @@ import com.example.crashcontrol.ui.composables.AppBar
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.ui.theme.CrashControlTheme
 import com.example.crashcontrol.utils.AccelerometerService
+import com.example.crashcontrol.utils.LocationService
 import org.koin.android.ext.android.get
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var accelerometer: AccelerometerService
+    private lateinit var locationService: LocationService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         accelerometer = get<AccelerometerService>()
+        locationService = get<LocationService>()
 
         setContent {
             val settingsVm = koinViewModel<SettingsViewModel>()
@@ -74,10 +77,12 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         accelerometer.subscribe()
+        locationService.resumeLocationRequest()
     }
 
     override fun onPause() {
         super.onPause()
         accelerometer.unsubscribe()
+        locationService.pauseLocationRequest()
     }
 }

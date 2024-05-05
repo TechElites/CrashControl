@@ -9,6 +9,7 @@ import com.example.crashcontrol.data.repositories.SettingsRepository
 import com.example.crashcontrol.ui.CrashesViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
+import com.example.crashcontrol.utils.LocationService
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -28,6 +29,8 @@ val appModule = module {
     }
 
     single { AccelerometerService(get()) }
+
+    single { LocationService(get()) }
 
     single { SettingsRepository(get()) }
 

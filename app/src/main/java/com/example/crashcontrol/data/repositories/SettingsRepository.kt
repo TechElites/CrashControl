@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     companion object {
         private val THEME_KEY = stringPreferencesKey("theme")
+
     }
 
     val theme = dataStore.data.map { preferences ->

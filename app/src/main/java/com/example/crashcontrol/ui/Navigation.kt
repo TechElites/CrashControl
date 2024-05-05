@@ -15,6 +15,7 @@ import com.example.crashcontrol.ui.screens.home.HomeScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
+import com.example.crashcontrol.utils.LocationService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -93,7 +94,8 @@ fun CrashControlNavGraph(
             composable(route) {
                 val settingsVm = koinViewModel<SettingsViewModel>()
                 val state by settingsVm.state.collectAsStateWithLifecycle()
-                SettingsScreen(state, settingsVm::changeTheme)
+                val location = koinInject<LocationService>()
+                SettingsScreen(state, settingsVm::changeTheme, location)
             }
         }
         with(CrashControlRoute.CrashesMap) {
