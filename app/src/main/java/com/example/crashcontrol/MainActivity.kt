@@ -12,14 +12,19 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.compose.rememberNavController
+import com.example.crashcontrol.data.models.Theme
 import com.example.crashcontrol.ui.CrashControlNavGraph
 import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.composables.AppBar
+import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.ui.theme.CrashControlTheme
 import com.example.crashcontrol.utils.AccelerometerService
 import org.koin.android.ext.android.get
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var accelerometer: AccelerometerService
@@ -30,7 +35,15 @@ class MainActivity : ComponentActivity() {
         accelerometer = get<AccelerometerService>()
 
         setContent {
-            CrashControlTheme {
+            val settingsVm = koinViewModel<SettingsViewModel>()
+            val settingsState by settingsVm.state.collectAsStateWithLifecycle()
+            CrashControlTheme(
+                darkTheme = when (settingsState.theme) {
+                    Theme.Light -> false
+                    Theme.Dark -> true
+                    Theme.System -> isSystemInDarkTheme()
+                }
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

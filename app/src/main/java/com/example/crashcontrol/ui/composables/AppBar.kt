@@ -41,8 +41,10 @@ fun AppBar(
             IconButton(onClick = { navController.navigate(CrashControlRoute.Debug.route) }) {
                 Icon(Icons.Outlined.Info, contentDescription = "Debug")
             }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Outlined.Settings, "Settings")
+            if (currentRoute.route != CrashControlRoute.Settings.route) {
+                IconButton(onClick = { navController.navigate(CrashControlRoute.Settings.route) }) {
+                    Icon(Icons.Outlined.Settings, "Settings")
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
