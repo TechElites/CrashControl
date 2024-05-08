@@ -16,6 +16,9 @@ data class Crash(
     val exclamation: String,
 
     @ColumnInfo
+    val favourite: Boolean,
+
+    @ColumnInfo
     val date: String,
 
     @ColumnInfo

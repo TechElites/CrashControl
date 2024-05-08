@@ -3,6 +3,7 @@ package com.example.crashcontrol
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.compose.rememberNavController
 import com.example.crashcontrol.data.models.Theme
 import com.example.crashcontrol.ui.CrashControlNavGraph
@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         accelerometer = get<AccelerometerService>()
+        accelerometer.startService()
         locationService = get<LocationService>()
 
         setContent {
@@ -76,13 +77,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        accelerometer.subscribe()
         locationService.resumeLocationRequest()
     }
 
     override fun onPause() {
         super.onPause()
-        accelerometer.unsubscribe()
         locationService.pauseLocationRequest()
     }
 }
