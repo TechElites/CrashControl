@@ -85,7 +85,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(40.dp))
 
         Text(
-            text = "Share Latest Crash",
+            text = "Place your crashes on the map",
             modifier = Modifier.padding(bottom = 8.dp),
             style = MaterialTheme.typography.titleLarge
         )
