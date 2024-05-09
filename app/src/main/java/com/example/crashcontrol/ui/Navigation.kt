@@ -10,12 +10,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
 import com.example.crashcontrol.ui.screens.debug.DebugScreen
 import com.example.crashcontrol.ui.screens.home.HomeScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
 import com.example.crashcontrol.utils.LocationService
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -57,8 +59,8 @@ fun CrashControlNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val placesVm = koinViewModel<CrashesViewModel>()
-    val placesState by placesVm.state.collectAsStateWithLifecycle()
+    val crashesVm = koinViewModel<CrashesViewModel>()
+    val crashesState by crashesVm.state.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -67,12 +69,12 @@ fun CrashControlNavGraph(
     ) {
         with(CrashControlRoute.Home) {
             composable(route) {
-                HomeScreen(placesState, navController)
+                HomeScreen(crashesState, navController)
             }
         }
         with(CrashControlRoute.CrashDetails) {
             composable(route, arguments) { backStackEntry ->
-                val crash = requireNotNull(placesState.crashes.find {
+                val crash = requireNotNull(crashesState.crashes.find {
                     it.id == backStackEntry.arguments?.getString("travelId")?.toInt()
                 })
 //                CrashDetailsScreen(crash)
@@ -80,14 +82,14 @@ fun CrashControlNavGraph(
         }
         with(CrashControlRoute.AddCrash) {
             composable(route) {
-//                val addCrashVm = koinViewModel<AddCrashViewModel>()
-//                val state by addCrashVm.state.collectAsStateWithLifecycle()
-//                AddCrashScreen(
-//                    state = state,
-//                    actions = addCrashVm.actions,
-//                    onSubmit = { crashehsVm.addCrash(state.toCrash()) },
-//                    navController = navController
-//                )
+                val addCrashVm = koinViewModel<AddCrashViewModel>()
+                val state by addCrashVm.state.collectAsStateWithLifecycle()
+                AddCrashScreen(
+                    state = state,
+                    actions = addCrashVm.actions,
+                    onSubmit = { crashesVm.addCrash(state.toCrash()) },
+                    navController = navController
+                )
             }
         }
         with(CrashControlRoute.Settings) {
