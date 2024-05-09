@@ -22,9 +22,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun DebugScreen(accelerometer: AccelerometerService) {
     var values = accelerometer.currentValues
-    var date = accelerometer.lastImpactDate
-    var duration = accelerometer.lastCrashDuration
-    var accelleration = accelerometer.lastImpactAccelleration
+    var date: String = accelerometer.lastImpactDate
+    var duration: String = accelerometer.lastCrashDuration
+    var accelleration: Float = accelerometer.lastImpactAccelleration
 
     LaunchedEffect(accelerometer) {
         val updateInterval = 1000L // Aggiorna ogni secondo
