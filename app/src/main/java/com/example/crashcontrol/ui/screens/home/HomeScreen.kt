@@ -35,16 +35,7 @@ import com.example.crashcontrol.ui.CrashesState
 @Composable
 fun HomeScreen(state: CrashesState, navController: NavHostController) {
     val crashList = listOf<Crash>(
-        Crash(1, "PO Box 4166", "Crimson", false,"10/28/2023", 93.0, 38.0, 33.0, 2L, 13L),
-        Crash(2, "Suite 93", "Yellow", false, "2/7/2024", 4.0, 13.0, 68.0, 4L, 21L),
-        Crash(3, "PO Box 13455", "Orange", false, "9/19/2023", 79.0, 74.0, 99.0, 17L, 19L),
-        Crash(4, "Room 503", "Yellow", false, "12/24/2023", 57.0, 75.0, 98.0, 17L, 7L),
-        Crash(5, "Room 1417", "Khaki", false, "10/4/2023", 34.0, 6.0, 91.0, 10L, 4L),
-        Crash(6, "PO Box 25447", "Green", false, "1/15/2024", 64.0, 63.0, 3.0, 1L, 18L),
-        Crash(7, "Room 70", "Green", false, "11/19/2023", 44.0, 30.0, 95.0, 14L, 10L),
-        Crash(8, "Apt 890", "Purple", false, "2/6/2024", 69.0, 91.0, 77.0, 22L, 0L),
-        Crash(9, "Room 520", "Aquamarine", false, "12/18/2023", 97.0, 65.0, 68.0, 18L, 15L),
-        Crash(10, "PO Box 63079", "Red", false, "10/3/2023", 80.0, 23.0, 12.0, 23L, 1L)
+        Crash(0,"casa mia", "mannaggia", false, "2021-10-10", "2021-10-10", 1000, 10.0, 10.0),
     )
 
     Scaffold(

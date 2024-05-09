@@ -16,23 +16,20 @@ data class Crash(
     val exclamation: String,
 
     @ColumnInfo
-    val favourite: Boolean,
+    val favourite: Boolean = false,
 
     @ColumnInfo
     val date: String,
 
+    @ColumnInfo(name = "impact_time")
+    val impactTime: String?,
+
+    @ColumnInfo
+    val duration: Long?,
+
     @ColumnInfo
     val height: Double,
 
-    @ColumnInfo
-    val velocity: Double?,
-
-    @ColumnInfo
-    val acceleration: Double?,
-
-    @ColumnInfo(name = "start_time")
-    val startTime: Long?,
-
-    @ColumnInfo(name = "end_time")
-    val endTime: Long?
+    @ColumnInfo(name = "impact_accelleration")
+    val impactAccelleration: Double
 )
