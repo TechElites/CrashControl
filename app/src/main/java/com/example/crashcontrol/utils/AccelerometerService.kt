@@ -1,15 +1,12 @@
 package com.example.crashcontrol.utils
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.text.DateFormat.getDateInstance
@@ -18,7 +15,7 @@ import java.util.Date
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-data class AccelerationValues(
+data class AccelerationAxis(
     val x: Float = 0f,
     val y: Float = 0f,
     val z: Float = 0f
@@ -30,11 +27,13 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private var lastMovementCrash: Long = 0
     private var movementStart: Long = 0
-    var values: AccelerationValues by mutableStateOf(AccelerationValues())
+    var currentValues: AccelerationAxis by mutableStateOf(AccelerationAxis())
         private set
-    var lastCrashTime: String by mutableStateOf("")
+    var lastImpactDate: String by mutableStateOf("")
         private set
     var lastCrashDuration: String by mutableStateOf("0")
+        private set
+    var lastImpactAccelleration: Float by mutableFloatStateOf(0f)
         private set
 
     fun startService() {
@@ -51,15 +50,15 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             movementStart = System.currentTimeMillis()
-            values = AccelerationValues(
+            currentValues = AccelerationAxis(
                 x = event.values[0],
                 y = event.values[1],
                 z = event.values[2]
             )
             val loAccelerationReader = sqrt(
-                values.x.toDouble().pow(2.0)
-                        + values.y.toDouble().pow(2.0)
-                        + values.z.toDouble().pow(2.0)
+                currentValues.x.toDouble().pow(2.0)
+                        + currentValues.y.toDouble().pow(2.0)
+                        + currentValues.z.toDouble().pow(2.0)
             )
             val precision = DecimalFormat("0.00")
             val ldAccRound = java.lang.Double.parseDouble(precision.format(loAccelerationReader))
@@ -68,12 +67,9 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
                 val timeStamp = getDateInstance().format(Date(System.currentTimeMillis()))
                 val duration = (System.currentTimeMillis() - movementStart).toString()
                 lastMovementCrash = System.currentTimeMillis()
-//                val fallObject = FallObject(timeStamp, duration)
-//                saveLastFall(fallObject)
-//                onSensorChanged.onFall(fallObject)
-                lastCrashTime = timeStamp
+                lastImpactDate = timeStamp
                 lastCrashDuration = duration
-//                showFallNotification(timeStamp, duration)
+                lastImpactAccelleration = currentValues.y
             }
         }
     }
