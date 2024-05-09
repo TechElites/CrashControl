@@ -22,6 +22,7 @@ data class AccelerationAxis(
 ) {}
 
 class AccelerometerService(private val ctx: Context) : SensorEventListener {
+    private val notificationService: NotificationService = NotificationService(ctx, "crash")
     private var sensorManager: SensorManager =
         ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -37,6 +38,7 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
         private set
 
     fun startService() {
+        notificationService.createNotificationChannel("CrashControl")
         accelerometer?.also { accel ->
             sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL)
         }
@@ -70,6 +72,7 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
                 lastImpactDate = timeStamp
                 lastCrashDuration = duration
                 lastImpactAccelleration = currentValues.y
+                notificationService.showNotification("Last fall $timeStamp with duration of $duration ms")
             }
         }
     }
