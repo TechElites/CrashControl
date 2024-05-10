@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,8 +40,6 @@ import com.example.crashcontrol.ui.screens.addcrash.AddCrashState
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.theme.CrashControlTheme
 import org.koin.androidx.compose.koinViewModel
-import java.text.DecimalFormat
-import kotlin.math.pow
 
 class CrashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,21 +53,14 @@ class CrashActivity : ComponentActivity() {
                     val data: Bundle? = intent.extras
                     val date = data?.getString("date")
                     val time = data?.getString("time")
-                    val duration = data?.getLong("duration")
-                    val accelleration = data?.getFloat("acceleration")
+                    val face = data?.getString("face")
                     val crashesVm = koinViewModel<CrashesViewModel>()
                     val addCrashVm = koinViewModel<AddCrashViewModel>()
                     val state by addCrashVm.state.collectAsStateWithLifecycle()
-                    if (date != null && time != null && duration != null && accelleration != null) {
+                    if (date != null && time != null && face != null) {
                         addCrashVm.actions.setDate(date)
-                        addCrashVm.actions.setImpactTime(time)
-                        addCrashVm.actions.setDuration(duration)
-                        addCrashVm.actions.setImpactAccelleration(accelleration)
-                        val flightTime = duration.toDouble() / 1000
-                        var height: Double = 0.5 * 9.81 * flightTime.pow(2.0)
-                        val precision = DecimalFormat("0.0000")
-                        height = precision.format(height).toDouble()
-                        addCrashVm.actions.setHeight(height)
+                        addCrashVm.actions.setTime(time)
+                        addCrashVm.actions.setFace(face)
                     }
                     AddExclamantion(
                         state = state,
@@ -152,7 +141,7 @@ fun AddExclamantion(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 OutlinedTextField(
-                    value = state.impactTime.toString(),
+                    value = state.time,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Time") })
@@ -166,41 +155,13 @@ fun AddExclamantion(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 OutlinedTextField(
-                    value = state.duration.toString(),
+                    value = state.face,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Duration") })
+                    label = { Text("Impact face") })
                 Icon(
-                    Icons.Filled.ArrowDropDown,
-                    contentDescription = "Duration",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedTextField(
-                    value = state.impactAccelleration.toString(),
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Impact accelleration") })
-                Icon(
-                    Icons.Filled.ExitToApp,
-                    contentDescription = "Accelleration",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedTextField(
-                    value = state.height.toString(),
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Height") })
-                Icon(
-                    Icons.Filled.KeyboardArrowUp,
-                    contentDescription = "Height",
+                    Icons.Filled.Build,
+                    contentDescription = "Face",
                     modifier = Modifier.size(30.dp)
                 )
             }

@@ -22,17 +22,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun DebugScreen(accelerometer: AccelerometerService) {
     var values = accelerometer.currentValues
-    var date: String = accelerometer.lastImpactDate
-    var duration: Long = accelerometer.lastCrashDuration
-    var accelleration: Float = accelerometer.lastImpactAcceleration
+    var crash = accelerometer.lastCrash
 
     LaunchedEffect(accelerometer) {
         val updateInterval = 1000L // Aggiorna ogni secondo
         while (true) {
             values = accelerometer.currentValues
-            date = accelerometer.lastImpactDate
-            duration = accelerometer.lastCrashDuration
-            accelleration = accelerometer.lastImpactAcceleration
+            crash = accelerometer.lastCrash
             delay(updateInterval)
         }
     }
@@ -61,20 +57,20 @@ fun DebugScreen(accelerometer: AccelerometerService) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            text = "Lastest Fall",
+            text = "Lastest Crash",
             style = MaterialTheme.typography.headlineSmall
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Date: $date",
+            text = "Date: ${crash.date}",
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "Duration: $duration ms",
+            text = "Time: ${crash.time}",
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "Impact accelleration: $accelleration m/s²",
+            text = "Impact face: ${crash.face}",
             style = MaterialTheme.typography.bodyLarge
         )
     }

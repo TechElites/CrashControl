@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,9 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.crashcontrol.ui.CrashControlRoute
-import com.example.crashcontrol.ui.CrashesState
-import com.example.crashcontrol.ui.screens.addcrash.AddCrashActions
 
 @Composable
 fun AddCrashScreen(
@@ -54,7 +51,7 @@ fun AddCrashScreen(
     ) { contentPadding ->
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(contentPadding)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -69,7 +66,6 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //Text(text = "Position: ", fontSize = 20.sp)
                 OutlinedTextField(
                     value = state.position ?: "",
                     onValueChange = actions::setPosition,
@@ -78,7 +74,6 @@ fun AddCrashScreen(
                     Icon(
                         Icons.Filled.LocationOn,
                         contentDescription = "Location",
-                        // Change the icon size
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -86,7 +81,6 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //Text(text = "Date: ", fontSize = 20.sp)
                 OutlinedTextField(
                     value = state.date,
                     onValueChange = actions::setDate,
@@ -95,7 +89,6 @@ fun AddCrashScreen(
                     Icon(
                         Icons.Filled.DateRange,
                         contentDescription = "Date",
-                        // Change the icon size
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -103,30 +96,39 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //Text(text = "Exclamation: ", fontSize = 20.sp)
                 OutlinedTextField(
-                    value = state.exclamation,
-                    onValueChange = actions::setExclamation,
-                    label = { Text("Exclamation") })
+                    value = state.time,
+                    onValueChange = actions::setTime,
+                    label = { Text("Time") })
                 Icon(
-                    Icons.Filled.Face,
-                    contentDescription = "Face",
-                    // Change the icon size
+                    Icons.Filled.DateRange,
+                    contentDescription = "Time",
                     modifier = Modifier.size(30.dp)
                 )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                //Text(text = "Height: ", fontSize = 20.sp)
                 OutlinedTextField(
-                    value = state.height.toString(),
-                    onValueChange = { actions.setHeight(it.toDouble()) },
-                    label = { Text("Height") })
+                    value = state.exclamation,
+                    onValueChange = actions::setExclamation,
+                    label = { Text("Exclamation") })
                 Icon(
-                    Icons.Filled.KeyboardArrowUp,
-                    contentDescription = "Height",
-                    // Change the icon size
+                    Icons.Filled.Face,
+                    contentDescription = "Exclamation",
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = state.face,
+                    onValueChange = actions::setFace,
+                    label = { Text("Impact face") })
+                Icon(
+                    Icons.Filled.Build,
+                    contentDescription = "Face",
                     modifier = Modifier.size(30.dp)
                 )
             }

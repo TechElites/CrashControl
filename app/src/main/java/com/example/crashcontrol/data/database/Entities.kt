@@ -10,7 +10,10 @@ data class Crash(
     val id: Int = 0,
 
     @ColumnInfo
-    val position: String?,
+    val latitude: Double?,
+
+    @ColumnInfo
+    val longitude: Double?,
 
     @ColumnInfo
     val exclamation: String,
@@ -21,15 +24,9 @@ data class Crash(
     @ColumnInfo
     val date: String,
 
-    @ColumnInfo(name = "impact_time")
-    val impactTime: String?,
+    @ColumnInfo
+    val time: String,
 
     @ColumnInfo
-    val duration: Long?,
-
-    @ColumnInfo
-    val height: Double,
-
-    @ColumnInfo(name = "impact_accelleration")
-    val impactAccelleration: Float
+    val face: String
 )

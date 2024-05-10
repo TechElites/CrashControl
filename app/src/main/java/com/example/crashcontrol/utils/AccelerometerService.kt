@@ -8,17 +8,17 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat.getString
 import com.example.crashcontrol.CrashActivity
 import com.example.crashcontrol.R
+import com.example.crashcontrol.data.database.Crash
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.Date
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -37,11 +37,7 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
     private var movementStart: Long = 0
     var currentValues: AccelerationAxis by mutableStateOf(AccelerationAxis())
         private set
-    var lastImpactDate: String by mutableStateOf("")
-        private set
-    var lastCrashDuration: Long by mutableLongStateOf(0)
-        private set
-    var lastImpactAcceleration: Float by mutableFloatStateOf(0f)
+    var lastCrash: Crash = Crash(0, 0.0, 0.0, "", false, "", "", "Up")
         private set
 
     fun startService() {
@@ -75,16 +71,13 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
             if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
                 val date = getDateInstance().format(Date(System.currentTimeMillis()))
                 val time = getTimeInstance().format(Date(System.currentTimeMillis()))
-                val duration = System.currentTimeMillis() - movementStart
+                val face = getImpactFace(currentValues)
                 lastMovementCrash = System.currentTimeMillis()
-                lastImpactDate = date
-                lastCrashDuration = duration
-                lastImpactAcceleration = currentValues.y
+                lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)
                 val intent = Intent(ctx, CrashActivity::class.java).apply {
                     putExtra("date", date)
                     putExtra("time", time)
-                    putExtra("duration", duration)
-                    putExtra("acceleration", lastImpactAcceleration)
+                    putExtra("face", face)
                 }
                 val pendingIntent =
                     PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
@@ -94,6 +87,24 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
                     pendingIntent
                 )
             }
+        }
+    }
+
+    private fun getImpactFace(values: AccelerationAxis): String {
+        return when {
+            abs(values.x) > abs(values.y) && abs(values.x) > abs(values.z) -> {
+                if (values.x < 0) "Left" else "Right"
+            }
+
+            abs(values.y) > abs(values.x) && abs(values.y) > abs(values.z) -> {
+                if (values.y < 0) "Up" else "Down"
+            }
+
+            abs(values.z) > abs(values.x) && abs(values.z) > abs(values.y) -> {
+                if (values.z < 0) "Front" else "Back"
+            }
+
+            else -> "Up"
         }
     }
 }

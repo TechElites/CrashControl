@@ -11,10 +11,8 @@ data class AddCrashState(
     val exclamation: String = "",
     val favourite: Boolean = false,
     val date: String = "",
-    val impactTime: String? = "",
-    val duration: Long? = 0,
-    val height: Double = 0.0,
-    val impactAccelleration: Float = 0f,
+    val time: String = "",
+    val face: String = ""
 
     /*val showLocationDisabledAlert: Boolean = false,
     val showLocationPermissionDeniedAlert: Boolean = false,
@@ -24,26 +22,23 @@ data class AddCrashState(
     val canSubmit get() = date.isNotBlank() && date.isNotBlank() && date.isNotBlank()
 
     fun toCrash() = Crash(
-        position = position,
+        latitude = 0.0,
+        longitude = 0.0,
         exclamation = exclamation,
         favourite = favourite,
         date = date,
-        impactTime = impactTime,
-        duration = duration,
-        height = height,
-        impactAccelleration = impactAccelleration,
+        time = time,
+        face = face
     )
 }
 
 interface AddCrashActions {
-    fun setPosition(position: String?)
+    fun setPosition(position: String)
     fun setExclamation(exclamation: String)
     fun setFavourite(favorite: Boolean)
     fun setDate(date: String)
-    fun setImpactTime(impactTime: String?)
-    fun setDuration(duration: Long?)
-    fun setHeight(height: Double)
-    fun setImpactAccelleration(impactAccelleration: Float)
+    fun setTime(time: String)
+    fun setFace(face: String)
     /*fun setShowLocationDisabledAlert(show: Boolean)
     fun setShowLocationPermissionDeniedAlert(show: Boolean)
     fun setShowLocationPermissionPermanentlyDeniedSnackbar(show: Boolean)
@@ -55,7 +50,7 @@ class AddCrashViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     val actions = object : AddCrashActions {
-        override fun setPosition(position: String?) =
+        override fun setPosition(position: String) =
             _state.update { it.copy(position = position) }
 
         override fun setExclamation(exclamation: String) =
@@ -67,17 +62,11 @@ class AddCrashViewModel : ViewModel() {
         override fun setDate(date: String) =
             _state.update { it.copy(date = date) }
 
-        override fun setImpactTime(impactTime: String?) =
-            _state.update { it.copy(impactTime = impactTime) }
+        override fun setTime(time: String) =
+            _state.update { it.copy(time = time) }
 
-        override fun setDuration(duration: Long?) =
-            _state.update { it.copy(duration = duration) }
-
-        override fun setHeight(height: Double) =
-            _state.update { it.copy(height = height) }
-
-        override fun setImpactAccelleration(impactAccelleration: Float) =
-            _state.update { it.copy(impactAccelleration = impactAccelleration) }
+        override fun setFace(face: String) =
+            _state.update { it.copy(face = face) }
 
         /*override fun setShowLocationDisabledAlert(show: Boolean) =
             _state.update { it.copy(showLocationDisabledAlert = show) }

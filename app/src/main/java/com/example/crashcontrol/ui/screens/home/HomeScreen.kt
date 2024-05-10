@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,14 +65,36 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
                 }
             }
         } else {
-            NoItemsPlaceholder(Modifier.padding(contentPadding))
+            NoItemsPlaceholder(contentPadding)
         }
     }
 }
 
 @Composable
-fun NoItemsPlaceholder(padding: Modifier) {
-    Text(text = "Non c'è nu cazz")
+fun NoItemsPlaceholder(padding: PaddingValues) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Icon(
+            Icons.Outlined.Clear, "Clear icon",
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .size(48.dp),
+            tint = MaterialTheme.colorScheme.secondary
+        )
+        Text(
+            "No items",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            "Tap the + button to add a new crash.",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,11 +117,11 @@ fun CrashItem(item: Crash, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = item.height.toString() + "m",
+                text = item.exclamation,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 35.sp,
+                fontSize = 40.sp,
                 textAlign = TextAlign.Center
             )
             Text(
@@ -108,7 +131,7 @@ fun CrashItem(item: Crash, onClick: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = item.exclamation,
+                text = item.face,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
