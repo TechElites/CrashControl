@@ -31,5 +31,5 @@ data class Crash(
     val height: Double,
 
     @ColumnInfo(name = "impact_accelleration")
-    val impactAccelleration: Double
+    val impactAccelleration: Float
 )

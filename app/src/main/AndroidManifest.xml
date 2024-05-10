@@ -38,6 +38,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.example.crashcontrol.CrashActivity" android:exported="false"/>
     </application>
 
 </manifest>

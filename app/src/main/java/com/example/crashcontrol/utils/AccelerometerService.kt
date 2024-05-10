@@ -1,15 +1,22 @@
 package com.example.crashcontrol.utils
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.getString
+import com.example.crashcontrol.CrashActivity
+import com.example.crashcontrol.R
 import java.text.DateFormat.getDateInstance
+import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.Date
 import kotlin.math.pow
@@ -32,9 +39,9 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
         private set
     var lastImpactDate: String by mutableStateOf("")
         private set
-    var lastCrashDuration: String by mutableStateOf("0")
+    var lastCrashDuration: Long by mutableLongStateOf(0)
         private set
-    var lastImpactAccelleration: Float by mutableFloatStateOf(0f)
+    var lastImpactAcceleration: Float by mutableFloatStateOf(0f)
         private set
 
     fun startService() {
@@ -66,13 +73,26 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
             val ldAccRound = java.lang.Double.parseDouble(precision.format(loAccelerationReader))
             // precision/fall detection and more than 1000ms after last fall
             if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
-                val timeStamp = getDateInstance().format(Date(System.currentTimeMillis()))
-                val duration = (System.currentTimeMillis() - movementStart).toString()
+                val date = getDateInstance().format(Date(System.currentTimeMillis()))
+                val time = getTimeInstance().format(Date(System.currentTimeMillis()))
+                val duration = System.currentTimeMillis() - movementStart
                 lastMovementCrash = System.currentTimeMillis()
-                lastImpactDate = timeStamp
+                lastImpactDate = date
                 lastCrashDuration = duration
-                lastImpactAccelleration = currentValues.y
-                notificationService.showNotification("Last fall $timeStamp with duration of $duration ms")
+                lastImpactAcceleration = currentValues.y
+                val intent = Intent(ctx, CrashActivity::class.java).apply {
+                    putExtra("date", date)
+                    putExtra("time", time)
+                    putExtra("duration", duration)
+                    putExtra("acceleration", lastImpactAcceleration)
+                }
+                val pendingIntent =
+                    PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
+                notificationService.showNotification(
+                    getString(ctx, R.string.crash_notification_title),
+                    getString(ctx, R.string.crash_notification_message),
+                    pendingIntent
+                )
             }
         }
     }

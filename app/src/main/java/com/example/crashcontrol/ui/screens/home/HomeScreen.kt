@@ -34,10 +34,6 @@ import com.example.crashcontrol.ui.CrashesState
 
 @Composable
 fun HomeScreen(state: CrashesState, navController: NavHostController) {
-    val crashList = listOf<Crash>(
-        Crash(0,"casa mia", "mannaggia", false, "2021-10-10", "2021-10-10", 1000, 10.0, 10.0),
-    )
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -50,7 +46,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
             }
         }
     ) { contentPadding ->
-        if (/*state.crashes.isNotEmpty()*/crashList.isNotEmpty()) {
+        if (state.crashes.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -58,7 +54,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(/*state.crashes*/crashList) { item ->
+                items(state.crashes) { item ->
                     CrashItem(
                         item,
                         onClick = {
@@ -102,17 +98,17 @@ fun CrashItem(item: Crash, onClick: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                fontSize = 40.sp,
+                fontSize = 35.sp,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = item.date.toString(),
+                text = item.date,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = item.position.toString(),
+                text = item.exclamation,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
