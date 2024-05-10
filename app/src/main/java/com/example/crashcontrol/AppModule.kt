@@ -7,6 +7,7 @@ import com.example.crashcontrol.data.database.CrashControlDatabase
 import com.example.crashcontrol.data.repositories.CrashesRepository
 import com.example.crashcontrol.data.repositories.SettingsRepository
 import com.example.crashcontrol.ui.CrashesViewModel
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
 import com.example.crashcontrol.utils.LocationService
@@ -40,6 +41,8 @@ val appModule = module {
             get<CrashControlDatabase>().crashesDAO()
         )
     }
+
+    viewModel { AddCrashViewModel() }
 
     viewModel { SettingsViewModel(get()) }
 
