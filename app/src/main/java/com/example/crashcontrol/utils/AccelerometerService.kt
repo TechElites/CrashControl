@@ -18,6 +18,7 @@ import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.Date
+import java.util.Random
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -79,8 +80,10 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
                     putExtra("time", time)
                     putExtra("face", face)
                 }
+                val r = Random()
+                val no: Int = r.nextInt(999999)
                 val pendingIntent =
-                    PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
+                    PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
                 notificationService.showNotification(
                     getString(ctx, R.string.crash_notification_title),
                     getString(ctx, R.string.crash_notification_message),

@@ -75,7 +75,7 @@ fun CrashControlNavGraph(
         with(CrashControlRoute.CrashDetails) {
             composable(route, arguments) { backStackEntry ->
                 val crash = requireNotNull(crashesState.crashes.find {
-                    it.id == backStackEntry.arguments?.getString("travelId")?.toInt()
+                    it.id == backStackEntry.arguments?.getString("crashId")?.toInt()
                 })
 //                CrashDetailsScreen(crash)
             }
