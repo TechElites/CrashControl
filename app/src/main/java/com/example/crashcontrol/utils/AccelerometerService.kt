@@ -70,27 +70,31 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
             val ldAccRound = java.lang.Double.parseDouble(precision.format(loAccelerationReader))
             // precision/fall detection and more than 1000ms after last fall
             if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
-                val date = getDateInstance().format(Date(System.currentTimeMillis()))
-                val time = getTimeInstance().format(Date(System.currentTimeMillis()))
-                val face = getImpactFace(currentValues)
-                lastMovementCrash = System.currentTimeMillis()
-                lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)
-                val intent = Intent(ctx, CrashActivity::class.java).apply {
-                    putExtra("date", date)
-                    putExtra("time", time)
-                    putExtra("face", face)
-                }
-                val r = Random()
-                val no: Int = r.nextInt(999999)
-                val pendingIntent =
-                    PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
-                notificationService.showNotification(
-                    getString(ctx, R.string.crash_notification_title),
-                    getString(ctx, R.string.crash_notification_message),
-                    pendingIntent
-                )
+                crash()
             }
         }
+    }
+
+    fun crash() {
+        val date = getDateInstance().format(Date(System.currentTimeMillis()))
+        val time = getTimeInstance().format(Date(System.currentTimeMillis()))
+        val face = getImpactFace(currentValues)
+        lastMovementCrash = System.currentTimeMillis()
+        lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)
+        val intent = Intent(ctx, CrashActivity::class.java).apply {
+            putExtra("date", date)
+            putExtra("time", time)
+            putExtra("face", face)
+        }
+        val r = Random()
+        val no: Int = r.nextInt(999999)
+        val pendingIntent =
+            PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
+        notificationService.showNotification(
+            getString(ctx, R.string.crash_notification_title),
+            getString(ctx, R.string.crash_notification_message),
+            pendingIntent
+        )
     }
 
     private fun getImpactFace(values: AccelerationAxis): String {
