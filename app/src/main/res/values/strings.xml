@@ -5,4 +5,6 @@
     <string name="theme_system">System</string>
     <string name="language_italian">Italian</string>
     <string name="language_english">English</string>
+    <string name="crash_notification_title">Oh no!</string>
+    <string name="crash_notification_message">Did your phone just crashed on the ground?! Tell us what you think about it.</string>
 </resources>

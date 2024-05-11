@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,10 +35,6 @@ import com.example.crashcontrol.ui.CrashesState
 
 @Composable
 fun HomeScreen(state: CrashesState, navController: NavHostController) {
-    val crashList = listOf<Crash>(
-        Crash(0,"casa mia", "mannaggia", false, "2021-10-10", "2021-10-10", 1000, 10.0, 10.0),
-    )
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -50,7 +47,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
             }
         }
     ) { contentPadding ->
-        if (state.crashes.isNotEmpty()/*crashList.isNotEmpty()*/) {
+        if (state.crashes.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -58,7 +55,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(state.crashes/*crashList*/) { item ->
+                items(state.crashes) { item ->
                     CrashItem(
                         item,
                         onClick = {
@@ -68,14 +65,36 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
                 }
             }
         } else {
-            NoItemsPlaceholder(Modifier.padding(contentPadding))
+            NoItemsPlaceholder(contentPadding)
         }
     }
 }
 
 @Composable
-fun NoItemsPlaceholder(padding: Modifier) {
-    Text(text = "Non c'è nu cazz")
+fun NoItemsPlaceholder(padding: PaddingValues) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Icon(
+            Icons.Outlined.Clear, "Clear icon",
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .size(48.dp),
+            tint = MaterialTheme.colorScheme.secondary
+        )
+        Text(
+            "No items",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            "Tap the + button to add a new crash.",
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +117,7 @@ fun CrashItem(item: Crash, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = item.height.toString() + "m",
+                text = item.exclamation,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
@@ -106,13 +125,13 @@ fun CrashItem(item: Crash, onClick: () -> Unit) {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = item.date.toString(),
+                text = item.date,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = item.position.toString(),
+                text = item.face,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
