@@ -29,14 +29,11 @@ import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     private lateinit var accelerometer: AccelerometerService
-    private lateinit var locationService: LocationService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         accelerometer = get<AccelerometerService>()
-        accelerometer.startService()
-        locationService = get<LocationService>()
 
         setContent {
             val settingsVm = koinViewModel<SettingsViewModel>()
@@ -73,15 +70,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        locationService.resumeLocationRequest()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        locationService.pauseLocationRequest()
     }
 }

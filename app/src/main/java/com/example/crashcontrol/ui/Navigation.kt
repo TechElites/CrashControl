@@ -74,9 +74,9 @@ fun CrashControlNavGraph(
         }
         with(CrashControlRoute.CrashDetails) {
             composable(route, arguments) { backStackEntry ->
-                val crash = requireNotNull(crashesState.crashes.find {
-                    it.id == backStackEntry.arguments?.getString("crashId")?.toInt()
-                })
+//                val crash = requireNotNull(crashesState.crashes.find {
+//                    it.id == backStackEntry.arguments?.getString("crashId")?.toInt()
+//                })
 //                CrashDetailsScreen(crash)
             }
         }
@@ -96,8 +96,7 @@ fun CrashControlNavGraph(
             composable(route) {
                 val settingsVm = koinViewModel<SettingsViewModel>()
                 val state by settingsVm.state.collectAsStateWithLifecycle()
-                val location = koinInject<LocationService>()
-                SettingsScreen(state, settingsVm::changeTheme, location)
+                SettingsScreen(state, settingsVm::changeTheme)
             }
         }
         with(CrashControlRoute.CrashesMap) {

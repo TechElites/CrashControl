@@ -38,7 +38,6 @@ import com.example.crashcontrol.utils.LocationService
 fun SettingsScreen(
     state: SettingsState,
     changeTheme: (Theme) -> Unit,
-    location: LocationService
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),

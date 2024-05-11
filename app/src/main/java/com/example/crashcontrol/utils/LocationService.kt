@@ -18,17 +18,13 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
-enum class MonitoringStatus {
-    Monitoring,
-    Paused,
-    NotMonitoring
-}
+enum class MonitoringStatus { Monitoring, Paused, NotMonitoring }
+
+enum class StartMonitoringResult { Started, GPSDisabled, PermissionDenied }
 
 data class Coordinates(val latitude: Double, val longitude: Double)
 
 class LocationService(private val ctx: Context) {
-    var isLocationEnabled: Boolean? by mutableStateOf(null)
-        private set
     var monitoringStatus by mutableStateOf(MonitoringStatus.NotMonitoring)
         private set
     var coordinates: Coordinates? by mutableStateOf(null)
@@ -60,18 +56,18 @@ class LocationService(private val ctx: Context) {
         }
     }
 
-    fun requestCurrentLocation() {
+    fun requestCurrentLocation(): StartMonitoringResult {
         // Check if location is enabled
         val locationManager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (isLocationEnabled != true) return
+        val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if (!isLocationEnabled) return StartMonitoringResult.GPSDisabled
 
         // Check if permission is granted
         val permissionGranted = ContextCompat.checkSelfPermission(
             ctx,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-        if (!permissionGranted) return
+        if (!permissionGranted) return StartMonitoringResult.PermissionDenied
 
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,
@@ -79,6 +75,7 @@ class LocationService(private val ctx: Context) {
             Looper.getMainLooper()
         )
         monitoringStatus = MonitoringStatus.Monitoring
+        return StartMonitoringResult.Started
     }
 
     fun endLocationRequest() {
