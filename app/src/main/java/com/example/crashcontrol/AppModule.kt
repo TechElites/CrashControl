@@ -32,6 +32,8 @@ val appModule = module {
 
     single { AccelerometerService(get()) }
 
+    single { NotificationService(get()) }
+
     single { LocationService(get()) }
 
     single { SettingsRepository(get()) }

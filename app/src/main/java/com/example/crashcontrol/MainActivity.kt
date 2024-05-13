@@ -23,7 +23,7 @@ import com.example.crashcontrol.ui.composables.AppBar
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.ui.theme.CrashControlTheme
 import com.example.crashcontrol.utils.AccelerometerService
-import com.example.crashcontrol.utils.LocationService
+import com.example.crashcontrol.utils.NotificationService
 import org.koin.android.ext.android.get
 import org.koin.androidx.compose.koinViewModel
 
@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         accelerometer = get<AccelerometerService>()
+        accelerometer.startService(get<NotificationService>())
 
         setContent {
             val settingsVm = koinViewModel<SettingsViewModel>()
@@ -70,5 +71,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        accelerometer.StopService()
     }
 }

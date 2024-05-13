@@ -1,5 +1,6 @@
 package com.example.crashcontrol.ui
 
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,6 +19,7 @@ import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
 import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
+import com.example.crashcontrol.utils.NotificationService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -96,7 +98,10 @@ fun CrashControlNavGraph(
             composable(route) {
                 val settingsVm = koinViewModel<SettingsViewModel>()
                 val state by settingsVm.state.collectAsStateWithLifecycle()
-                SettingsScreen(state, settingsVm::changeTheme)
+                val notificationService = koinInject<NotificationService>()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    SettingsScreen(state, settingsVm::changeTheme, notificationService)
+                }
             }
         }
         with(CrashControlRoute.CrashesMap) {
