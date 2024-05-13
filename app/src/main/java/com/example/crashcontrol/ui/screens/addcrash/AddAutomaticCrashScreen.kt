@@ -18,8 +18,10 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,8 +34,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +55,7 @@ import com.example.crashcontrol.utils.PermissionStatus
 import com.example.crashcontrol.utils.StartMonitoringResult
 import com.example.crashcontrol.utils.rememberPermission
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAutomaticCrashScreen(
     state: AddCrashState,
@@ -72,15 +77,14 @@ fun AddAutomaticCrashScreen(
                 showLocationDisabledAlert = res == StartMonitoringResult.GPSDisabled
             }
 
-            PermissionStatus.Denied ->
-                showPermissionDeniedAlert = true
+            PermissionStatus.Denied -> showPermissionDeniedAlert = true
 
-            PermissionStatus.PermanentlyDenied ->
-                showPermissionPermanentlyDeniedSnackbar = true
+            PermissionStatus.PermanentlyDenied -> showPermissionPermanentlyDeniedSnackbar = true
 
             PermissionStatus.Unknown -> {}
         }
     }
+
     fun requestLocation() {
         if (locationPermission.status.isGranted) {
             val res = locationService.requestCurrentLocation()
@@ -89,22 +93,45 @@ fun AddAutomaticCrashScreen(
             locationPermission.launchPermissionRequest()
         }
     }
+
+    SideEffect {
+        requestLocation()
+    }
+
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primary,
-                onClick = {
-                    if (!state.canSubmit) return@FloatingActionButton
-                    onSubmit()
-                    val intent = Intent(ctx, MainActivity::class.java)
-                    ctx.startActivity(intent)
-                }
-            ) {
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "Ouch!",
+                        fontWeight = FontWeight.Medium,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        val intent = Intent(ctx, MainActivity::class.java)
+                        ctx.startActivity(intent)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "Back button"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        }, floatingActionButton = {
+            FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
+                if (!state.canSubmit) return@FloatingActionButton
+                onSubmit()
+                val intent = Intent(ctx, MainActivity::class.java)
+                ctx.startActivity(intent)
+            }) {
                 Icon(Icons.Filled.Check, contentDescription = "Add New Crash")
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { innerPadding ->
+        }, snackbarHost = { SnackbarHost(snackbarHostState) }) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -113,73 +140,75 @@ fun AddAutomaticCrashScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "How you feeling champ?",
+                text = "How you're feeling mate?",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.exclamation,
+                OutlinedTextField(value = state.exclamation,
                     onValueChange = actions::setExclamation,
                     label = { Text("Exclamation") })
-                Icon(
-                    Icons.Filled.Face,
-                    contentDescription = "Face",
-                    modifier = Modifier.size(30.dp)
-                )
+                IconButton(onClick = {}) {
+                    Icon(
+                        Icons.Filled.Face, contentDescription = "Face",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.date,
+                OutlinedTextField(value = state.date,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Date") })
-                Icon(
-                    Icons.Filled.DateRange,
-                    contentDescription = "Date",
-                    modifier = Modifier.size(30.dp)
-                )
+                IconButton(onClick = {}) {
+                    Icon(
+                        Icons.Filled.DateRange,
+                        contentDescription = "Date",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.time,
+                OutlinedTextField(value = state.time,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Time") })
-                Icon(
-                    Icons.Filled.DateRange,
-                    contentDescription = "Time",
-                    modifier = Modifier.size(30.dp)
-                )
+                IconButton(onClick = {}) {
+                    Icon(
+                        Icons.Filled.DateRange,
+                        contentDescription = "Time",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.face,
+                OutlinedTextField(value = state.face,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Impact face") })
-                Icon(
-                    Icons.Filled.Build,
-                    contentDescription = "Face",
-                    modifier = Modifier.size(30.dp)
-                )
+                IconButton(onClick = {}) {
+                    Icon(
+                        Icons.Filled.Build,
+                        contentDescription = "Face",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.position ?: "",
+                OutlinedTextField(value = state.position ?: "",
                     onValueChange = actions::setPosition,
                     label = { Text("Current position") })
                 IconButton(onClick = ::requestLocation) {
@@ -194,8 +223,7 @@ fun AddAutomaticCrashScreen(
             Text("Longitude: ${locationService.coordinates?.longitude ?: "-"}")
         }
         if (showLocationDisabledAlert) {
-            AlertDialog(
-                title = { Text("Location disabled") },
+            AlertDialog(title = { Text("Location disabled") },
                 text = { Text("Location must be enabled to get your current location in the app.") },
                 confirmButton = {
                     TextButton(onClick = {
@@ -210,12 +238,10 @@ fun AddAutomaticCrashScreen(
                         Text("Dismiss")
                     }
                 },
-                onDismissRequest = { showLocationDisabledAlert = false }
-            )
+                onDismissRequest = { showLocationDisabledAlert = false })
         }
         if (showPermissionDeniedAlert) {
-            AlertDialog(
-                title = { Text("Location permission denied") },
+            AlertDialog(title = { Text("Location permission denied") },
                 text = { Text("Location permission is required to get your current location in the app.") },
                 confirmButton = {
                     TextButton(onClick = {
@@ -230,8 +256,7 @@ fun AddAutomaticCrashScreen(
                         Text("Dismiss")
                     }
                 },
-                onDismissRequest = { showPermissionDeniedAlert = false }
-            )
+                onDismissRequest = { showPermissionDeniedAlert = false })
         }
         if (showPermissionPermanentlyDeniedSnackbar) {
             LaunchedEffect(snackbarHostState) {
