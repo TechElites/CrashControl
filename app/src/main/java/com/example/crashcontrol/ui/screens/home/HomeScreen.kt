@@ -34,7 +34,7 @@ import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.CrashesState
 
 @Composable
-fun HomeScreen(state: CrashesState, navController: NavHostController) {
+fun HomeScreen(state: CrashesState, navController: NavHostController, favourites: Boolean = false) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -55,14 +55,33 @@ fun HomeScreen(state: CrashesState, navController: NavHostController) {
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(state.crashes) { item ->
+                if(favourites) {
+                    items(state.crashes.filter { crash: Crash -> crash.favourite }) { item ->
+                        CrashItem(
+                            item,
+                            onClick = {
+                                navController.navigate(CrashControlRoute.CrashDetails.buildRoute(item.id.toString()))
+                            }
+                        )
+                    }
+                } else {
+                    items(state.crashes) { item ->
+                        CrashItem(
+                            item,
+                            onClick = {
+                                navController.navigate(CrashControlRoute.CrashDetails.buildRoute(item.id.toString()))
+                            }
+                        )
+                    }
+                }
+                /*items(state.crashes/*.filter { crash: Crash -> crash.favourite }*/) { item ->
                     CrashItem(
                         item,
                         onClick = {
                             navController.navigate(CrashControlRoute.CrashDetails.buildRoute(item.id.toString()))
                         }
                     )
-                }
+                }*/
             }
         } else {
             NoItemsPlaceholder(contentPadding)

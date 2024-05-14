@@ -49,9 +49,11 @@ sealed class CrashControlRoute(
 
     data object Debug : CrashControlRoute("debug", "Debug")
 
+    data object Favourites : CrashControlRoute("favourites", "Favourites")
+
     companion object {
         val routes =
-            setOf(Home, CrashDetails, AddCrash, Settings, CrashesMap, Profile, Achievements, Debug)
+            setOf(Home, CrashDetails, AddCrash, Settings, CrashesMap, Profile, Achievements, Debug, Favourites)
     }
 }
 
@@ -70,7 +72,7 @@ fun CrashControlNavGraph(
     ) {
         with(CrashControlRoute.Home) {
             composable(route) {
-                HomeScreen(crashesState, navController)
+                HomeScreen(crashesState, navController, false)
             }
         }
         with(CrashControlRoute.CrashDetails) {
@@ -120,6 +122,11 @@ fun CrashControlNavGraph(
             composable(route) {
                 val accelerometer = koinInject<AccelerometerService>()
                 DebugScreen(accelerometer)
+            }
+        }
+        with(CrashControlRoute.Favourites) {
+            composable(route) {
+                HomeScreen(crashesState, navController, true)
             }
         }
     }

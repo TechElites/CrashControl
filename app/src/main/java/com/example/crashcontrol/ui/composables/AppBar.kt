@@ -1,6 +1,7 @@
 package com.example.crashcontrol.ui.composables
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Settings
@@ -44,6 +45,11 @@ fun AppBar(
             if (currentRoute.route != CrashControlRoute.Settings.route) {
                 IconButton(onClick = { navController.navigate(CrashControlRoute.Settings.route) }) {
                     Icon(Icons.Outlined.Settings, "Settings")
+                }
+            }
+            if (currentRoute.route == CrashControlRoute.Home.route) {
+                IconButton(onClick = { navController.navigate(CrashControlRoute.Favourites.route) }) {
+                    Icon(Icons.Outlined.Favorite, "Favourites")
                 }
             }
         },
