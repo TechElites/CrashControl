@@ -72,12 +72,19 @@ class MainActivity : ComponentActivity() {
                     ModalNavigationDrawer(
                         drawerState = drawerState,
                         drawerContent = {
-                            SideMenu(navController, currentRoute)
+                            SideMenu(navController, currentRoute) {
+                                scope.launch {
+                                    drawerState.apply {
+                                        close()
+                                    }
+                                }
+                            }
                         },
                     ) {
                         Scaffold(
                             topBar = {
-                                AppBar(navController, currentRoute
+                                AppBar(
+                                    navController, currentRoute
                                 ) {
                                     scope.launch {
                                         drawerState.apply {

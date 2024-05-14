@@ -31,6 +31,7 @@ import com.example.crashcontrol.ui.CrashControlRoute
 fun SideMenu(
     navController: NavHostController,
     currentRoute: CrashControlRoute,
+    onItemClick: () -> Unit
 ) {
     ModalDrawerSheet {
         Row(
@@ -51,7 +52,7 @@ fun SideMenu(
         NavigationDrawerItem(
             label = { Text(text = "Go back", fontSize = 20.sp) },
             selected = false,
-            onClick = { navController.navigateUp() },
+            onClick = { navController.navigateUp(); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
             icon = {
                 Icon(
@@ -63,7 +64,7 @@ fun SideMenu(
         NavigationDrawerItem(
             label = { Text(text = "Home Page", fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Home,
-            onClick = { navController.navigate(CrashControlRoute.Home.route) },
+            onClick = { navController.navigate(CrashControlRoute.Home.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
             icon = {
                 Icon(
@@ -75,7 +76,7 @@ fun SideMenu(
         NavigationDrawerItem(
             label = { Text(text = "Profile Page", fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Profile,
-            onClick = { navController.navigate(CrashControlRoute.Profile.route) },
+            onClick = { navController.navigate(CrashControlRoute.Profile.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
             icon = {
                 Icon(
@@ -87,7 +88,7 @@ fun SideMenu(
         NavigationDrawerItem(
             label = { Text(text = "World Map", fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.CrashesMap,
-            onClick = { navController.navigate(CrashControlRoute.CrashesMap.route) },
+            onClick = { navController.navigate(CrashControlRoute.CrashesMap.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
             icon = {
                 Icon(
@@ -99,7 +100,7 @@ fun SideMenu(
         NavigationDrawerItem(
             label = { Text(text = "Achievements", fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Achievements,
-            onClick = { navController.navigate(CrashControlRoute.Achievements.route) },
+            onClick = { navController.navigate(CrashControlRoute.Achievements.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp),
             icon = {
                 Icon(
