@@ -20,7 +20,8 @@ import com.example.crashcontrol.ui.CrashControlRoute
 @Composable
 fun AppBar(
     navController: NavHostController,
-    currentRoute: CrashControlRoute
+    currentRoute: CrashControlRoute,
+    onMenuClick: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -30,7 +31,7 @@ fun AppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { onMenuClick() }) {
                 Icon(
                     imageVector = Icons.Outlined.Menu,
                     contentDescription = "Side Menu"
