@@ -24,6 +24,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -100,12 +101,11 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "App Theme",
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(top = 30.dp, bottom = 20.dp),
                 style = MaterialTheme.typography.titleLarge
             )
             Theme.entries.forEach { theme ->
@@ -118,9 +118,7 @@ fun SettingsScreen(
                             onClick = { changeTheme(theme) },
                             role = Role.RadioButton
                         )
-                        .padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                        .padding(start = 155.dp),
                 ) {
                     RadioButton(
                         selected = (theme == state.theme),
@@ -139,20 +137,16 @@ fun SettingsScreen(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(40.dp))
-
             Text(
                 text = "Get notified in real time of crashes",
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(bottom = 10.dp),
                 style = MaterialTheme.typography.titleLarge
             )
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .height(56.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
@@ -166,53 +160,57 @@ fun SettingsScreen(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(40.dp))
-
             Text(
                 text = "App Language",
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(bottom = 10.dp),
                 style = MaterialTheme.typography.titleLarge
             )
-            var expanded by remember { mutableStateOf(false) }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More"
-                    )
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Language.entries.forEach { language ->
-                        DropdownMenuItem(
-                            onClick = { /* TODO */ },
-                            text = {
-                                Text(
-                                    text = stringResource(
-                                        when (language) {
-                                            Language.Italian -> R.string.language_italian
-                                            Language.English -> R.string.language_english
-                                        }
-                                    ),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
-                            }
-                        )
-                    }
-                }
-            }
+//            var expanded by remember { mutableStateOf(false) }
+//            Row(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(56.dp)
+//                    .padding(horizontal = 16.dp),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//                OutlinedTextField(
+//                    value = "",
+//                    onValueChange = {},
+//                    enabled = false,
+//                    trailingIcon = {
+//                        IconButton(onClick = { expanded = !expanded }) {
+//                            Icon(
+//                                imageVector = Icons.Default.MoreVert,
+//                                contentDescription = "More"
+//                            )
+//                        }
+//                    }
+//                )
+//                DropdownMenu(
+//                    expanded = expanded,
+//                    onDismissRequest = { expanded = false },
+//                ) {
+//                    Language.entries.forEach { language ->
+//                        DropdownMenuItem(
+//                            onClick = { /* TODO */ },
+//                            text = {
+//                                Text(
+//                                    text = stringResource(
+//                                        when (language) {
+//                                            Language.Italian -> R.string.language_italian
+//                                            Language.English -> R.string.language_english
+//                                        }
+//                                    ),
+//                                    style = MaterialTheme.typography.bodyLarge,
+//                                    modifier = Modifier.padding(start = 16.dp)
+//                                )
+//                            }
+//                        )
+//                    }
+//                }
+//            }
         }
     }
     if (showLocationDisabledAlert) {
