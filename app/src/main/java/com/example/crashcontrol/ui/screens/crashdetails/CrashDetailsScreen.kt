@@ -2,6 +2,8 @@ package com.example.crashcontrol.ui.screens.crashdetails
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.sharp.Favorite
 import androidx.compose.material3.Button
@@ -23,15 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.crashcontrol.data.database.Crash
 import com.example.crashcontrol.data.remote.OSMPlace
+import com.example.crashcontrol.ui.CrashControlRoute
+import kotlinx.coroutines.delay
+import okhttp3.internal.wait
 
 @Composable
 fun CrashDetailsScreen(
     crash: Crash,
     state: CrashDetailsState,
+    navController: NavController,
     actions: CrashDetailsActions,
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
+    onDelete: () -> Unit
 ) {
     val ctx = LocalContext.current
     actions.setId(crash.id)
@@ -44,25 +53,43 @@ fun CrashDetailsScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.primary,
-                onClick = {
-                    actions.setFavourite(!state.favourite)
-                    onSubmit()
+            Column {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    onClick = {
+                        actions.setFavourite(!state.favourite)
+                        onSubmit()
+                    }
+                ) {
+                    if (state.favourite)
+                        Icon(
+                            Icons.Outlined.Favorite,
+                            "Remove from favourites",
+                            tint = Color.Red
+                        )
+                    else
+                        Icon(
+                            Icons.Outlined.Favorite,
+                            "Add to favourites",
+                            tint = Color.White
+                        )
                 }
-            ) {
-                if (state.favourite)
+                Spacer(Modifier.size(8.dp))
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    onClick = {
+                        navController.navigateUp()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            onDelete()
+                        }, 1500)
+
+                    }
+                ) {
                     Icon(
-                        Icons.Outlined.Favorite,
-                        "Remove from favourites",
-                        tint = Color.Red
+                        Icons.Outlined.Delete,
+                        "Delete crash",
                     )
-                else
-                    Icon(
-                        Icons.Outlined.Favorite,
-                        "Add to favourites",
-                        tint = Color.White
-                    )
+                }
             }
         },
     ) { contentPadding ->

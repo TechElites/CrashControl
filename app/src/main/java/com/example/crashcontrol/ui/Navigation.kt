@@ -89,7 +89,9 @@ fun CrashControlNavGraph(
                     crash = crash,
                     state = state,
                     actions = crashDetailsVm.actions,
-                    onSubmit = { crashesVm.addCrash(state.toCrash()) }
+                    onSubmit = { crashesVm.addCrash(state.toCrash()) },
+                    onDelete = { crashesVm.deleteCrash(crash) },
+                    navController = navController
                 )
             }
         }

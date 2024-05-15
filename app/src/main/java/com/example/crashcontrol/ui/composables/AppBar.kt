@@ -47,16 +47,17 @@ fun AppBar(
             IconButton(onClick = { navController.navigate(CrashControlRoute.Debug.route) }) {
                 Icon(Icons.Outlined.Info, contentDescription = "Debug")
             }
-            if (currentRoute.route != CrashControlRoute.Settings.route) {
-                IconButton(onClick = { navController.navigate(CrashControlRoute.Settings.route) }) {
-                    Icon(Icons.Outlined.Settings, "Settings")
-                }
-            }
             if (currentRoute.route == CrashControlRoute.Home.route) {
                 IconButton(onClick = { navController.navigate(CrashControlRoute.Favourites.route) }) {
                     Icon(Icons.Outlined.Favorite, "Favourites")
                 }
             }
+            if (currentRoute.route != CrashControlRoute.Settings.route) {
+                IconButton(onClick = { navController.navigate(CrashControlRoute.Settings.route) }) {
+                    Icon(Icons.Outlined.Settings, "Settings")
+                }
+            }
+
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
