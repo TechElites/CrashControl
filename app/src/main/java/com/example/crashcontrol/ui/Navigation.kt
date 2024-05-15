@@ -67,7 +67,6 @@ fun CrashControlNavGraph(
 ) {
     val crashesVm = koinViewModel<CrashesViewModel>()
     val crashesState by crashesVm.state.collectAsStateWithLifecycle()
-    val crasheDetailsVm = koinViewModel<CrashDetailsViewModel>()
 
     NavHost(
         navController = navController,
@@ -84,11 +83,13 @@ fun CrashControlNavGraph(
                 val crash = requireNotNull(crashesState.crashes.find {
                     it.id == backStackEntry.arguments?.getString("crashId")?.toInt()
                 })
+                val crashDetailsVm = koinViewModel<CrashDetailsViewModel>()
+                val state by crashDetailsVm.state.collectAsStateWithLifecycle()
                 CrashDetailsScreen(
                     crash = crash,
-                    state = koinViewModel<CrashDetailsViewModel>().state,
-                    actions = koinViewModel<AddCrashViewModel>().actions,
-                    onSubmit = { /*crasheDetailsVm.addCrash(crasheDetailsVm.state.value.toCrash())*/}
+                    state = state,
+                    actions = crashDetailsVm.actions,
+                    onSubmit = { crashesVm.addCrash(state.toCrash()) }
                 )
             }
         }

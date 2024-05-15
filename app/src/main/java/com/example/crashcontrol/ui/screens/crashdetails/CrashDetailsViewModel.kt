@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class CrashDetailsState(
+    val id: Int = 0,
     val position: OSMPlace? = null,
     val exclamation: String = "",
     val favourite: Boolean = false,
@@ -17,6 +18,7 @@ data class CrashDetailsState(
 
 ) {
     fun toCrash() = Crash(
+        id = id,
         latitude = position?.latitude ?: 0.0,
         longitude = position?.longitude ?: 0.0,
         exclamation = exclamation,
@@ -28,6 +30,7 @@ data class CrashDetailsState(
 }
 
 interface CrashDetailsActions {
+    fun setId(id: Int)
     fun setPosition(position: OSMPlace)
     fun setExclamation(exclamation: String)
     fun setFavourite(favorite: Boolean)
@@ -42,6 +45,10 @@ class CrashDetailsViewModel : ViewModel() {
     val state = _state.asStateFlow()
 
     val actions = object : CrashDetailsActions {
+
+        override fun setId(id: Int) =
+            _state.update { it.copy(id = id) }
+
         override fun setPosition(position: OSMPlace) =
             _state.update { it.copy(position = position) }
 

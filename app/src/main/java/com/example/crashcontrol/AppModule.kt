@@ -66,10 +66,7 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
 
     viewModel { CrashesViewModel(get()) }
-<<<<<<< HEAD
 
     viewModel { CrashDetailsViewModel() }
 }
-=======
-}
->>>>>>> main
+

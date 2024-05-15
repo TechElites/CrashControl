@@ -208,9 +208,10 @@ fun AddAutomaticCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(value = state.position ?: "",
-                    onValueChange = actions::setPosition,
-                    label = { Text("Current position") })
+                OutlinedTextField(
+                    value = "",
+                    onValueChange = { },
+                    label = { Text(text = "Current position") })
                 IconButton(onClick = ::requestLocation) {
                     Icon(
                         Icons.Filled.LocationOn,

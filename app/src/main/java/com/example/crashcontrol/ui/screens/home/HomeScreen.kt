@@ -1,5 +1,6 @@
 package com.example.crashcontrol.ui.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,7 +36,8 @@ import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.CrashesState
 
 @Composable
-fun HomeScreen(state: CrashesState, navController: NavHostController, favourites: Boolean = false) {
+fun HomeScreen(state: CrashesState, navController: NavHostController, favourites: Boolean) {
+    val ctx = LocalContext.current
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -56,6 +59,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController, favourites
                 modifier = Modifier.padding(contentPadding)
             ) {
                 if(favourites) {
+                    //Toast.makeText(ctx, state.crashes.filter { crash: Crash -> crash.favourite }.toString(), Toast.LENGTH_SHORT).show()
                     items(state.crashes.filter { crash: Crash -> crash.favourite }) { item ->
                         CrashItem(
                             item,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.sharp.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -19,43 +20,49 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.crashcontrol.data.database.Crash
-import com.example.crashcontrol.ui.screens.addcrash.AddCrashActions
-import kotlinx.coroutines.flow.StateFlow
+import com.example.crashcontrol.data.remote.OSMPlace
 
 @Composable
 fun CrashDetailsScreen(
     crash: Crash,
-    state: StateFlow<CrashDetailsState>,
-    actions: AddCrashActions,
+    state: CrashDetailsState,
+    actions: CrashDetailsActions,
     onSubmit: () -> Unit
 ) {
     val ctx = LocalContext.current
-
-    /*fun shareDetails() {
-        val sendIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, crash.exclamation)
-        }
-        val shareIntent = Intent.createChooser(sendIntent, "Share travel")
-        if (shareIntent.resolveActivity(ctx.packageManager) != null) {
-            ctx.startActivity(shareIntent)
-        }
-    }*/
+    actions.setId(crash.id)
+    actions.setPosition(OSMPlace(0, crash.latitude!!, crash.longitude!!, ""))
+    actions.setExclamation(crash.exclamation)
+    //actions.setFavourite(crash.favourite)
+    actions.setDate(crash.date)
+    actions.setTime(crash.time)
+    actions.setFace(crash.face)
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.primary,
                 onClick = {
-                    actions.setFavourite(!state.value.favourite)
+                    actions.setFavourite(!state.favourite)
                     onSubmit()
                 }
             ) {
-                Icon(Icons.Outlined.Favorite, "Add to favourites")
+                if (state.favourite)
+                    Icon(
+                        Icons.Outlined.Favorite,
+                        "Remove from favourites",
+                        tint = Color.Red
+                    )
+                else
+                    Icon(
+                        Icons.Outlined.Favorite,
+                        "Add to favourites",
+                        tint = Color.White
+                    )
             }
         },
     ) { contentPadding ->
@@ -93,6 +100,12 @@ fun CrashDetailsScreen(
             Spacer(Modifier.size(8.dp))
             Text(
                 crash.face,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.size(8.dp))
+            Text(
+                crash.favourite.toString(),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = MaterialTheme.typography.bodyMedium
             )
