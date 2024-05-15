@@ -33,9 +33,9 @@ fun CrashesMapScreen(latestCrash: Crash?) {
         modifier = Modifier.fillMaxSize(),
         cameraState = cameraState
     ) {
-        crashes.forEach { marker ->
+        for (crash in crashes) {
             Marker(
-                state = marker
+                state = crash
             )
         }
     }
