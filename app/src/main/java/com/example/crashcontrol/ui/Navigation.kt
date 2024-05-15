@@ -18,6 +18,7 @@ import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
 import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
+import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -64,6 +65,7 @@ fun CrashControlNavGraph(
 ) {
     val crashesVm = koinViewModel<CrashesViewModel>()
     val crashesState by crashesVm.state.collectAsStateWithLifecycle()
+    val crasheDetailsVm = koinViewModel<CrashDetailsViewModel>()
 
     NavHost(
         navController = navController,
@@ -80,7 +82,12 @@ fun CrashControlNavGraph(
                 val crash = requireNotNull(crashesState.crashes.find {
                     it.id == backStackEntry.arguments?.getString("crashId")?.toInt()
                 })
-                CrashDetailsScreen(crash)
+                CrashDetailsScreen(
+                    crash = crash,
+                    state = koinViewModel<CrashDetailsViewModel>().state,
+                    actions = koinViewModel<AddCrashViewModel>().actions,
+                    onSubmit = { /*crasheDetailsVm.addCrash(crasheDetailsVm.state.value.toCrash())*/}
+                )
             }
         }
         with(CrashControlRoute.AddCrash) {

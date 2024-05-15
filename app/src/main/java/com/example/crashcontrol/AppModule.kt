@@ -9,6 +9,7 @@ import com.example.crashcontrol.data.repositories.CrashesRepository
 import com.example.crashcontrol.data.repositories.SettingsRepository
 import com.example.crashcontrol.ui.CrashesViewModel
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
+import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
 import com.example.crashcontrol.utils.LocationService
@@ -63,4 +64,6 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
 
     viewModel { CrashesViewModel(get()) }
+
+    viewModel { CrashDetailsViewModel() }
 }
