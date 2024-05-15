@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         },
+                        gesturesEnabled = false
                     ) {
                         Scaffold(
                             topBar = {
