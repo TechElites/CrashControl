@@ -21,6 +21,7 @@ import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
+import com.example.crashcontrol.ui.screens.crashesmap.CrashesMapScreen
 import com.example.crashcontrol.utils.NotificationService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -119,7 +120,8 @@ fun CrashControlNavGraph(
         }
         with(CrashControlRoute.CrashesMap) {
             composable(route) {
-//                CrashesMapScreen(placesState.crashes, navController)
+                val latestCrash = crashesState.crashes.maxByOrNull { it.id }
+                CrashesMapScreen(latestCrash)
             }
         }
         with(CrashControlRoute.Profile) {
