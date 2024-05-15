@@ -1,6 +1,8 @@
 package com.example.crashcontrol.ui.composables
 
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Menu
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.example.crashcontrol.ui.CrashControlRoute
@@ -24,6 +27,7 @@ fun AppBar(
     currentRoute: CrashControlRoute,
     onMenuClick: () -> Unit
 ) {
+    val ctx = LocalContext.current
     CenterAlignedTopAppBar(
         title = {
             Text(
