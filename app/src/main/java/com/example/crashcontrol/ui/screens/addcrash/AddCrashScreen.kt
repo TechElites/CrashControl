@@ -64,6 +64,8 @@ import com.example.crashcontrol.data.remote.OSMDataSource
 import com.example.crashcontrol.data.remote.OSMPlace
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -257,7 +259,12 @@ fun AddCrashScreen(
                         TextButton(
                             onClick = {
                                 val selectedDate = Calendar.getInstance().apply {
-                                    timeInMillis = datePickerState.selectedDateMillis!!
+                                    timeInMillis =
+                                        if (datePickerState.selectedDateMillis == null || datePickerState.selectedDateMillis == 0L) {
+                                            System.currentTimeMillis()
+                                        } else {
+                                            datePickerState.selectedDateMillis!!
+                                        }
                                 }
                                 val formatter = SimpleDateFormat("dd/MM/yyyy")
                                 val calendar = Calendar.getInstance()
@@ -287,7 +294,12 @@ fun AddCrashScreen(
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                actions.setTime(timePickerState.hour.toString() + ":" + timePickerState.minute)
+                                val f: NumberFormat = DecimalFormat("00")
+                                actions.setTime(
+                                    f.format(timePickerState.hour).toString() + ":" + f.format(
+                                        timePickerState.minute
+                                    ).toString()
+                                )
                                 showTimePicker = false
                             }
                         ) { Text("OK") }
