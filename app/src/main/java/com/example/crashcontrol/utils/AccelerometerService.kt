@@ -18,6 +18,7 @@ import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
 import java.text.DecimalFormat
 import java.util.Date
+import java.util.Random
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -29,7 +30,7 @@ data class AccelerationAxis(
 ) {}
 
 class AccelerometerService(private val ctx: Context) : SensorEventListener {
-    private val notificationService: NotificationService = NotificationService(ctx, "crash")
+    private var notificationSender: NotificationService = NotificationService(ctx)
     private var sensorManager: SensorManager =
         ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var accelerometer: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -40,11 +41,16 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
     var lastCrash: Crash = Crash(0, 0.0, 0.0, "", false, "", "", "Up")
         private set
 
-    fun startService() {
+    fun startService(notificationService: NotificationService) {
+        notificationSender = notificationService
         notificationService.createNotificationChannel("CrashControl")
         accelerometer?.also { accel ->
             sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL)
         }
+    }
+
+    fun StopService() {
+        sensorManager.unregisterListener(this)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -69,25 +75,31 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
             val ldAccRound = java.lang.Double.parseDouble(precision.format(loAccelerationReader))
             // precision/fall detection and more than 1000ms after last fall
             if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
-                val date = getDateInstance().format(Date(System.currentTimeMillis()))
-                val time = getTimeInstance().format(Date(System.currentTimeMillis()))
-                val face = getImpactFace(currentValues)
-                lastMovementCrash = System.currentTimeMillis()
-                lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)
-                val intent = Intent(ctx, CrashActivity::class.java).apply {
-                    putExtra("date", date)
-                    putExtra("time", time)
-                    putExtra("face", face)
-                }
-                val pendingIntent =
-                    PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
-                notificationService.showNotification(
-                    getString(ctx, R.string.crash_notification_title),
-                    getString(ctx, R.string.crash_notification_message),
-                    pendingIntent
-                )
+                crash()
             }
         }
+    }
+
+    fun crash() {
+        val date = getDateInstance().format(Date(System.currentTimeMillis()))
+        val time = getTimeInstance().format(Date(System.currentTimeMillis()))
+        val face = getImpactFace(currentValues)
+        lastMovementCrash = System.currentTimeMillis()
+        lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)
+        val intent = Intent(ctx, CrashActivity::class.java).apply {
+            putExtra("date", date)
+            putExtra("time", time)
+            putExtra("face", face)
+        }
+        val r = Random()
+        val no: Int = r.nextInt(999999)
+        val pendingIntent =
+            PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
+        notificationSender.showNotification(
+            getString(ctx, R.string.crash_notification_title),
+            getString(ctx, R.string.crash_notification_message),
+            pendingIntent
+        )
     }
 
     private fun getImpactFace(values: AccelerationAxis): String {

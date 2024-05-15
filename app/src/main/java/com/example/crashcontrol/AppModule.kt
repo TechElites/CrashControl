@@ -38,6 +38,8 @@ val appModule = module {
 
     single { AccelerometerService(get()) }
 
+    single { NotificationService(get()) }
+
     single { LocationService(get()) }
 
     single { SettingsRepository(get()) }
@@ -64,6 +66,10 @@ val appModule = module {
     viewModel { SettingsViewModel(get()) }
 
     viewModel { CrashesViewModel(get()) }
+<<<<<<< HEAD
 
     viewModel { CrashDetailsViewModel() }
 }
+=======
+}
+>>>>>>> main
