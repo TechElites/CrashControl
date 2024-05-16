@@ -10,10 +10,15 @@ import com.example.crashcontrol.data.repositories.SettingsRepository
 import com.example.crashcontrol.ui.CrashesViewModel
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
+import com.example.crashcontrol.ui.screens.profile.ProfileViewModel
+import com.example.crashcontrol.ui.screens.profile.signin.SignInViewModel
+import com.example.crashcontrol.ui.screens.profile.signup.SignUpViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
+import com.example.crashcontrol.utils.AccountService
 import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.utils.NotificationService
+import com.google.firebase.auth.FirebaseAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -35,6 +40,8 @@ val appModule = module {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    single { AccountService(FirebaseAuth.getInstance()) }
 
     single { AccelerometerService(get()) }
 
@@ -60,6 +67,12 @@ val appModule = module {
         }
     }
     single { OSMDataSource(get()) }
+
+    viewModel { ProfileViewModel(get<AccountService>()) }
+
+    viewModel { SignUpViewModel(get<AccountService>()) }
+
+    viewModel { SignInViewModel(get<AccountService>()) }
 
     viewModel { AddCrashViewModel() }
 

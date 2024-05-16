@@ -2,6 +2,7 @@ package com.example.crashcontrol.ui
 
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,16 +13,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
+import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
+import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
+import com.example.crashcontrol.ui.screens.crashesmap.CrashesMapScreen
 import com.example.crashcontrol.ui.screens.debug.DebugScreen
 import com.example.crashcontrol.ui.screens.home.HomeScreen
+import com.example.crashcontrol.ui.screens.profile.ProfileScreen
+import com.example.crashcontrol.ui.screens.profile.ProfileState
+import com.example.crashcontrol.ui.screens.profile.ProfileViewModel
+import com.example.crashcontrol.ui.screens.profile.signin.SignInScreen
+import com.example.crashcontrol.ui.screens.profile.signin.SignInViewModel
+import com.example.crashcontrol.ui.screens.profile.signup.SignUpScreen
+import com.example.crashcontrol.ui.screens.profile.signup.SignUpViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
-import com.example.crashcontrol.utils.LocationService
-import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
-import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
-import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
-import com.example.crashcontrol.ui.screens.crashesmap.CrashesMapScreen
 import com.example.crashcontrol.utils.NotificationService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -49,6 +56,10 @@ sealed class CrashControlRoute(
 
     data object Profile : CrashControlRoute("profile", "Profile")
 
+    data object SignIn : CrashControlRoute("signin", "Sign In")
+
+    data object SignUp : CrashControlRoute("signup", "Sign Up")
+
     data object Achievements : CrashControlRoute("achievements", "Achievements")
 
     data object Debug : CrashControlRoute("debug", "Debug")
@@ -57,7 +68,19 @@ sealed class CrashControlRoute(
 
     companion object {
         val routes =
-            setOf(Home, CrashDetails, AddCrash, Settings, CrashesMap, Profile, Achievements, Debug, Favourites)
+            setOf(
+                Home,
+                CrashDetails,
+                AddCrash,
+                Settings,
+                CrashesMap,
+                Profile,
+                SignIn,
+                SignUp,
+                Achievements,
+                Debug,
+                Favourites
+            )
     }
 }
 
@@ -124,7 +147,35 @@ fun CrashControlNavGraph(
         }
         with(CrashControlRoute.Profile) {
             composable(route) {
-//                ProfileScreen()
+                val profileVm = koinViewModel<ProfileViewModel>()
+                val state by profileVm.state.collectAsState(initial = ProfileState(false))
+                ProfileScreen(
+                    navController = navController,
+                    state = state,
+                    actions = profileVm.actions
+                )
+            }
+        }
+        with(CrashControlRoute.SignIn) {
+            composable(route) {
+                val signInVm = koinViewModel<SignInViewModel>()
+                val state by signInVm.state.collectAsStateWithLifecycle()
+                SignInScreen(
+                    navController = navController,
+                    state = state,
+                    actions = signInVm.actions
+                )
+            }
+        }
+        with(CrashControlRoute.SignUp) {
+            composable(route) {
+                val signUpVm = koinViewModel<SignUpViewModel>()
+                val state by signUpVm.state.collectAsStateWithLifecycle()
+                SignUpScreen(
+                    navController = navController,
+                    state = state,
+                    actions = signUpVm.actions
+                )
             }
         }
         with(CrashControlRoute.Achievements) {
