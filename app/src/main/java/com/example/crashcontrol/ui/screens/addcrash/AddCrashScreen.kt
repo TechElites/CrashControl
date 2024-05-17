@@ -1,10 +1,16 @@
 package com.example.crashcontrol.ui.screens.addcrash
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.provider.CalendarContract
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +29,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -44,6 +51,8 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,7 +69,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
+import com.example.crashcontrol.MainActivity
 import com.example.crashcontrol.data.remote.OSMDataSource
 import com.example.crashcontrol.data.remote.OSMPlace
 import kotlinx.coroutines.launch
@@ -68,19 +80,30 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import com.example.crashcontrol.utils.LocationService
+import com.example.crashcontrol.utils.PermissionStatus
+import com.example.crashcontrol.utils.StartMonitoringResult
+import com.example.crashcontrol.utils.rememberPermission
+
+enum class Mode { Automatic, Manual }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCrashScreen(
-    navController: NavHostController,
+    navController: NavHostController?,
     state: AddCrashState,
     actions: AddCrashActions,
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
+    locationService: LocationService?,
 ) {
+    val mode: Mode = if (navController != null) Mode.Manual else Mode.Automatic
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     var placeText by remember { mutableStateOf("") }
-    var place by remember { mutableStateOf<OSMPlace?>(null) }
+    var place by remember {
+        mutableStateOf<OSMPlace?>(null)
+    }
     var placeNotFound by remember { mutableStateOf(false) }
 
     val datePickerState = rememberDatePickerState()
@@ -90,6 +113,39 @@ fun AddCrashScreen(
     var showTimePicker by remember { mutableStateOf(false) }
 
     val ctx = LocalContext.current
+    var showLocationDisabledAlert by remember { mutableStateOf(false) }
+    var showPermissionDeniedAlert by remember { mutableStateOf(false) }
+    var showPermissionPermanentlyDeniedSnackbar by remember { mutableStateOf(false) }
+    val locationPermission = rememberPermission(
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) { status ->
+        when (status) {
+            PermissionStatus.Granted -> {
+                val res = locationService?.requestCurrentLocation()
+                showLocationDisabledAlert = res == StartMonitoringResult.GPSDisabled
+            }
+
+            PermissionStatus.Denied -> showPermissionDeniedAlert = true
+
+            PermissionStatus.PermanentlyDenied -> showPermissionPermanentlyDeniedSnackbar = true
+
+            PermissionStatus.Unknown -> {}
+        }
+    }
+
+    fun requestLocation() {
+        if (locationPermission.status.isGranted) {
+            val res = locationService?.requestCurrentLocation()
+            showLocationDisabledAlert = res == StartMonitoringResult.GPSDisabled
+        } else {
+            locationPermission.launchPermissionRequest()
+        }
+    }
+
+    SideEffect {
+        requestLocation()
+    }
+
     fun isOnline(): Boolean {
         val connectivityManager =
             ctx.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -128,13 +184,29 @@ fun AddCrashScreen(
             }
         }
     }
+
+    fun addEvent(title: String, exclamation: String, location: String, begin: Long, end: Long) {
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            data = CalendarContract.Events.CONTENT_URI
+            putExtra(CalendarContract.Events.TITLE, title)
+            putExtra(CalendarContract.Events.DESCRIPTION, exclamation)
+            putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
+            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
+        }
+        startActivity(ctx, intent, null)
+    }
+
+    val openAlertDialog = remember { mutableStateOf(false) }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
                 if (!state.canSubmit) return@FloatingActionButton
                 onSubmit()
-                navController.navigateUp()
+                openAlertDialog.value = true
+
             }) {
                 Icon(Icons.Filled.Check, contentDescription = "Add New Crash")
             }
@@ -158,7 +230,11 @@ fun AddCrashScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 OutlinedTextField(
-                    value = placeText,
+                    value = if (mode == Mode.Manual) {
+                        placeText
+                    } else {
+                        "Current position"
+                    },
                     onValueChange = { placeText = it },
                     singleLine = true,
                     modifier = Modifier.width(287.dp),
@@ -185,12 +261,23 @@ fun AddCrashScreen(
             ) {
                 Button(
                     onClick = {
+                        if (navController == null) {
+                            val latitude = locationService?.coordinates?.latitude
+                            val longitude = locationService?.coordinates?.longitude
+                            place =
+                                OSMPlace(
+                                    0,
+                                    latitude!!,
+                                    longitude!!,
+                                    "Current location"
+                                )
+                        }
                         actions.setPosition(place!!)
                         placeText = place?.displayName.toString()
                     },
-                    enabled = place != null
+                    enabled = (place != null || navController == null)
                 ) {
-                    Text("Accept suggestion")
+                    Text("Accept this position")
                 }
             }
             Row(
@@ -251,6 +338,10 @@ fun AddCrashScreen(
                     )
                 }
             }
+            Text("Latitude: ${locationService?.coordinates?.latitude ?: "-"}")
+            Text("Longitude: ${locationService?.coordinates?.longitude ?: "-"}")
+            Text("modalità: $mode")
+
             // date picker component
             if (showDatePicker) {
                 DatePickerDialog(
@@ -316,6 +407,98 @@ fun AddCrashScreen(
                     TimePicker(state = timePickerState)
                 }
             }
+
+            if (showLocationDisabledAlert) {
+                AlertDialog(title = { Text("Location disabled") },
+                    text = { Text("Location must be enabled to get your current location in the app.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            locationService?.openLocationSettings()
+                            showLocationDisabledAlert = false
+                        }) {
+                            Text("Enable")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showLocationDisabledAlert = false }) {
+                            Text("Dismiss")
+                        }
+                    },
+                    onDismissRequest = { showLocationDisabledAlert = false })
+            }
+            if (showPermissionDeniedAlert) {
+                AlertDialog(title = { Text("Location permission denied") },
+                    text = { Text("Location permission is required to get your current location in the app.") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            locationPermission.launchPermissionRequest()
+                            showPermissionDeniedAlert = false
+                        }) {
+                            Text("Grant")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showPermissionDeniedAlert = false }) {
+                            Text("Dismiss")
+                        }
+                    },
+                    onDismissRequest = { showPermissionDeniedAlert = false })
+            }
+            if (showPermissionPermanentlyDeniedSnackbar) {
+                LaunchedEffect(snackbarHostState) {
+                    val res = snackbarHostState.showSnackbar(
+                        "Location permission is required.",
+                        "Go to Settings",
+                        duration = SnackbarDuration.Long
+                    )
+                    if (res == SnackbarResult.ActionPerformed) {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", ctx.packageName, null)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        if (intent.resolveActivity(ctx.packageManager) != null) {
+                            ctx.startActivity(intent)
+                        }
+                    }
+                    showPermissionPermanentlyDeniedSnackbar = false
+                }
+            }
+        }
+    }
+    when {
+        openAlertDialog.value -> {
+            AlertDialogExample(
+                onDismissRequest = {
+                    openAlertDialog.value = false
+                    if (mode == Mode.Manual && navController != null) {
+                        navController.navigateUp()
+                    } else {
+                        val intent = Intent(ctx, MainActivity::class.java)
+                        ctx.startActivity(intent)
+                    }
+                    //navController?.navigateUp()
+                },
+                onConfirmation = {
+                    openAlertDialog.value = false
+                    addEvent(
+                        "Crash",
+                        state.exclamation,
+                        state.position?.displayName!!,
+                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse("${state.date} ${state.time}")!!.time,
+                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse("${state.date} ${state.time}")!!.time,
+                    )
+                    if (mode == Mode.Manual && navController != null) {
+                        navController.navigateUp()
+                    } else {
+                        val intent = Intent(ctx, MainActivity::class.java)
+                        ctx.startActivity(intent)
+                    }
+                    //navController?.navigateUp()
+                },
+                dialogTitle = "Add to Calendar",
+                dialogText = "Do you want to add this crash to your calendar?",
+                icon = Icons.Default.DateRange
+            )
         }
     }
 }
@@ -371,4 +554,47 @@ fun TimePickerDialog(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlertDialogExample(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+    icon: ImageVector,
+) {
+    AlertDialog(
+        icon = {
+            Icon(icon, contentDescription = "Example Icon")
+        },
+        title = {
+            Text(text = dialogTitle)
+        },
+        text = {
+            Text(text = dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.crashcontrol.ui.CrashesViewModel
-import com.example.crashcontrol.ui.screens.addcrash.AddAutomaticCrashScreen
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.theme.CrashControlTheme
 import com.example.crashcontrol.utils.LocationService
@@ -43,11 +43,12 @@ class CrashActivity : ComponentActivity() {
                         addCrashVm.actions.setTime(time)
                         addCrashVm.actions.setFace(face)
                     }
-                    AddAutomaticCrashScreen(
+                    AddCrashScreen(
+                        navController = null,
                         state = state,
                         actions = addCrashVm.actions,
-                        locationService = locationService,
                         onSubmit = { crashesVm.addCrash(state.toCrash()) },
+                        locationService = locationService,
                     )
                 }
             }

@@ -17,7 +17,6 @@ import com.example.crashcontrol.ui.screens.home.HomeScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
-import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
@@ -104,7 +103,8 @@ fun CrashControlNavGraph(
                     state = state,
                     actions = addCrashVm.actions,
                     onSubmit = { crashesVm.addCrash(state.toCrash()) },
-                    navController = navController
+                    navController = navController,
+                    locationService = null
                 )
             }
         }
