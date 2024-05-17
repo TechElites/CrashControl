@@ -60,8 +60,7 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     }
 
     suspend fun linkAccount(email: String, password: String) {
-        val credential = EmailAuthProvider.getCredential(email, password)
-        auth.currentUser!!.linkWithCredential(credential).await()
+        auth.createUserWithEmailAndPassword(email, password).await()
     }
 
     suspend fun deleteAccount() {

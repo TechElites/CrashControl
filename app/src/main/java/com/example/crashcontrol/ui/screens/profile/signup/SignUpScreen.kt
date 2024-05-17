@@ -18,7 +18,7 @@ package com.example.crashcontrol.ui.screens.profile.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -56,23 +56,22 @@ fun SignUpScreen(
     state: SignUpState,
     actions: SignUpActions
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val ctx = LocalContext.current
-        val snackbarHostState = remember { SnackbarHostState() }
-        var snackBarMessage by remember { mutableIntStateOf(R.string.email_error) }
-        var showWrongInputAlert by remember { mutableStateOf(false) }
+    val ctx = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    var snackBarMessage by remember { mutableIntStateOf(R.string.email_error) }
+    var showWrongInputAlert by remember { mutableStateOf(false) }
 
-        Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { innerPadding ->
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val fieldModifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
                 .padding(16.dp, 4.dp)
             EmailField(state.email, actions::setEmail, fieldModifier)
             PasswordField(state.password, actions::setPassword, fieldModifier)
@@ -102,15 +101,15 @@ fun SignUpScreen(
                 }
             }
         }
+    }
 
-        if (showWrongInputAlert) {
-            LaunchedEffect(snackbarHostState) {
-                snackbarHostState.showSnackbar(
-                    getString(ctx, snackBarMessage),
-                    duration = SnackbarDuration.Long
-                )
-                showWrongInputAlert = false
-            }
+    if (showWrongInputAlert) {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar(
+                getString(ctx, snackBarMessage),
+                duration = SnackbarDuration.Long
+            )
+            showWrongInputAlert = false
         }
     }
 }

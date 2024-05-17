@@ -2,7 +2,7 @@ package com.example.crashcontrol.ui.screens.profile.signin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -46,13 +46,12 @@ fun SignInScreen(
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { innerPadding ->
         val fieldModifier = Modifier
             .fillMaxWidth()
-            .padding(innerPadding)
             .padding(16.dp, 4.dp)
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
