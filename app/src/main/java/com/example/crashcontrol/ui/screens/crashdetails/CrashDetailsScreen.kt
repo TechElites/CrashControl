@@ -21,16 +21,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.sharp.Favorite
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -41,14 +45,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.crashcontrol.MainActivity
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
 import com.example.crashcontrol.data.remote.OSMPlace
 import com.example.crashcontrol.ui.CrashControlRoute
+import com.example.crashcontrol.ui.screens.addcrash.Mode
 import com.utsman.osmandcompose.DefaultMapProperties
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.MarkerState
@@ -60,6 +67,7 @@ import kotlinx.coroutines.delay
 import okhttp3.internal.wait
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import java.text.SimpleDateFormat
 
 @Composable
 fun CrashDetailsScreen(
@@ -102,15 +110,16 @@ fun CrashDetailsScreen(
             .copy(zoomButtonVisibility = ZoomButtonVisibility.NEVER)
     }
 
+    val openAlertDialog = remember { mutableStateOf(false) }
+
     Scaffold(
         floatingActionButton = {
             Column {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.primary,
                     onClick = {
-                        //onSubmit()
+                        openAlertDialog.value = true
                         actions.setFavourite(!state.favourite)
-                        onSubmit()
                     }) {
                     Icon(
                         Icons.Outlined.Favorite,
@@ -210,4 +219,64 @@ fun CrashDetailsScreen(
             )
         }
     }
+    when {
+        openAlertDialog.value -> {
+            com.example.crashcontrol.ui.screens.addcrash.AlertDialogExample(
+                onDismissRequest = {
+                    openAlertDialog.value = false
+                    actions.setFavourite(!state.favourite)
+                },
+                onConfirmation = {
+                    openAlertDialog.value = false
+                    onSubmit()
+                },
+                dialogTitle = "Favourite crash",
+                dialogText = "Do you want to change the favourite status of this crash?",
+                icon = Icons.Default.DateRange
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlertDialogExample(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+    icon: ImageVector,
+) {
+    AlertDialog(
+        icon = {
+            Icon(icon, contentDescription = "Example Icon")
+        },
+        title = {
+            Text(text = dialogTitle)
+        },
+        text = {
+            Text(text = dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }
