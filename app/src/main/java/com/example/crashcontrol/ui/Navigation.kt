@@ -111,7 +111,6 @@ fun CrashControlNavGraph(
                 val state by crashDetailsVm.state.collectAsStateWithLifecycle()
                 CrashDetailsScreen(
                     crash = crash,
-                    state = state,
                     actions = crashDetailsVm.actions,
                     onSubmit = { crashesVm.addCrash(state.toCrash()) },
                     onDelete = { crashesVm.deleteCrash(crash) },

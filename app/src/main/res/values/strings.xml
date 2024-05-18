@@ -6,6 +6,7 @@
     <string name="language_italian">Italian</string>
     <string name="language_english">English</string>
     <string name="crash_notification_title">Oh no!</string>
+    <string name="crash_title">F*ck!</string>
     <string name="crash_notification_message">Did your phone just crashed on the ground?! Tell us what you think about it.</string>
     <string name="generic_error">An error occurred</string>
     <string name="email_error">Wrong email</string>
@@ -31,4 +32,20 @@
     <string name="picture">Picture</string>
     <string name="empty_fields_error">Some fields are empty</string>
     <string name="loading">Loading…</string>
+    <string name="date">Date</string>
+    <string name="no_internet_connectivity">No internet connectivity</string>
+    <string name="open_settings">Open settings</string>
+    <string name="position">Position</string>
+    <string name="current_position">Current position</string>
+    <string name="no_result">No result</string>
+    <string name="time">Time</string>
+    <string name="select_time">Select time</string>
+    <string name="exclamation">Exclamation</string>
+    <string name="impact_face">Impact face</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="front">Front</string>
+    <string name="back">Back</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
 </resources>

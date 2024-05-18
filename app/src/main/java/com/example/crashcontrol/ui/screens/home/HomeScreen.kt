@@ -1,6 +1,5 @@
 package com.example.crashcontrol.ui.screens.home
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,17 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,11 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,15 +43,12 @@ import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
 import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.CrashesState
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(state: CrashesState, navController: NavHostController, favourites: Boolean) {
-    val ctx = LocalContext.current
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     val selectedOption = remember { mutableStateOf("All") }
     Scaffold(
         floatingActionButton = {
@@ -125,7 +115,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController, favourites
                 }
             }
         } else {
-            NoItemsPlaceholder(contentPadding)
+            NoItemsPlaceholder()
         }
     }
 
@@ -160,7 +150,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController, favourites
 }
 
 @Composable
-fun NoItemsPlaceholder(padding: PaddingValues) {
+fun NoItemsPlaceholder() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

@@ -16,7 +16,6 @@ import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
-import java.text.DecimalFormat
 import java.util.Date
 import java.util.Random
 import kotlin.math.abs
@@ -24,9 +23,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 data class AccelerationAxis(
-    val x: Float = 0f,
-    val y: Float = 0f,
-    val z: Float = 0f
+    val x: Float = 0f, val y: Float = 0f, val z: Float = 0f
 ) {}
 
 class AccelerometerService(private val ctx: Context) : SensorEventListener {
@@ -62,14 +59,11 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             movementStart = System.currentTimeMillis()
             currentValues = AccelerationAxis(
-                x = event.values[0],
-                y = event.values[1],
-                z = event.values[2]
+                x = event.values[0], y = event.values[1], z = event.values[2]
             )
             val loAccelerationReader = sqrt(
-                currentValues.x.toDouble().pow(2.0)
-                        + currentValues.y.toDouble().pow(2.0)
-                        + currentValues.z.toDouble().pow(2.0)
+                currentValues.x.toDouble().pow(2.0) + currentValues.y.toDouble()
+                    .pow(2.0) + currentValues.z.toDouble().pow(2.0)
             )
             //val precision = DecimalFormat("0.00")
             //val ldAccRound: Double? = (precision.format(loAccelerationReader)).toDoubleOrNull()
@@ -96,8 +90,7 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
         }
         val r = Random()
         val no: Int = r.nextInt(999999)
-        val pendingIntent =
-            PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
+        val pendingIntent = PendingIntent.getActivity(ctx, no, intent, PendingIntent.FLAG_MUTABLE)
         notificationSender.showNotification(
             getString(ctx, R.string.crash_notification_title),
             getString(ctx, R.string.crash_notification_message),

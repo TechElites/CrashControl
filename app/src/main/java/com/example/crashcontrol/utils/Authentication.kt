@@ -42,7 +42,7 @@ fun String.passwordMatches(repeated: String): Boolean {
 }
 
 open class AuthViewModel() : ViewModel() {
-    fun launchCatching(snackbar: Boolean = true, block: suspend CoroutineScope.() -> Unit) =
+    fun launchCatching(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(
             CoroutineExceptionHandler { _, throwable ->
                 throwable.printStackTrace()

@@ -16,11 +16,14 @@ data class AddCrashState(
     val face: String = ""
 
 ) {
-    val canSubmit get() = date.isNotBlank() && exclamation.isNotBlank()// && position != null
+    fun canSubmit() = exclamation.isNotEmpty()
+            && date.isNotEmpty()
+            && time.isNotEmpty()
+            && face.isNotEmpty()
 
     fun toCrash() = Crash(
-        latitude = position?.latitude ?: 0.0,
-        longitude = position?.longitude ?: 0.0,
+        latitude = position?.latitude,
+        longitude = position?.longitude,
         exclamation = exclamation,
         favourite = favourite,
         date = date,

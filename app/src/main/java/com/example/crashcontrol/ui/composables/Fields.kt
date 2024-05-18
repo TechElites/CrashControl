@@ -76,11 +76,13 @@ fun IconButtonField(
             modifier = modifier,
             value = value,
             onValueChange = { onNewValue(it) },
-            label = { Text(stringResource(text)) }
+            label = { Text(stringResource(text)) },
+            trailingIcon = {
+                IconButton(onClick = { onButtonClicked() }) {
+                    Icon(imageVector = icon, contentDescription = "Icon")
+                }
+            }
         )
-        IconButton(onClick = { onButtonClicked() }) {
-            Icon(imageVector = icon, contentDescription = "Icon")
-        }
     }
 }
 
