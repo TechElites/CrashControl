@@ -13,11 +13,25 @@ data class FBUser(
     val picture: String = "",
 )
 
+data class FBCrash(
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val exclamation: String = "",
+    val date: String = "",
+    val time: String = "",
+    val face: String = ""
+)
+
 class FBDataSource(database: FirebaseFirestore) {
     private val refToUsers: CollectionReference = database.collection("Users")
+    private val refToCrashes: CollectionReference = database.collection("Crashes")
 
     fun saveUser(userId: String, user: FBUser) {
         refToUsers.document(userId).set(user)
+    }
+
+    fun saveCrash(userId: String, crash: FBCrash) {
+        refToCrashes.document(userId).set(crash)
     }
 
     suspend fun loadUser(userId: String): FBUser? {
@@ -30,7 +44,22 @@ class FBDataSource(database: FirebaseFirestore) {
 
     }
 
+    suspend fun loadCrashes(): Set<FBCrash> {
+        val document = refToCrashes.get().await()
+        val crashes: MutableSet<FBCrash> = mutableSetOf()
+        for (doc in document) {
+            if (doc.exists()) {
+                crashes.add(doc.toObject(FBCrash::class.java))
+            }
+        }
+        return crashes
+    }
+
     fun deleteUser(userId: String) {
         refToUsers.document(userId).delete()
+    }
+
+    fun deleteCrash(userId: String) {
+        refToCrashes.document(userId).delete()
     }
 }
