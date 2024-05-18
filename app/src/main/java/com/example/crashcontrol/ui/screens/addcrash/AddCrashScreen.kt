@@ -85,6 +85,10 @@ import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.utils.PermissionStatus
 import com.example.crashcontrol.utils.StartMonitoringResult
 import com.example.crashcontrol.utils.rememberPermission
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 import kotlin.reflect.KFunction1
 
 enum class Mode { Automatic, Manual }
@@ -277,7 +281,8 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(value = state.date,
+                OutlinedTextField(
+                    value = state.date,
                     onValueChange = actions::setDate,
                     label = { Text("Date") })
                 IconButton(onClick = { showDatePicker = true }) {
@@ -291,7 +296,8 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(value = state.time,
+                OutlinedTextField(
+                    value = state.time,
                     onValueChange = actions::setTime,
                     label = { Text("Time") })
                 IconButton(onClick = { showTimePicker = true }) {
@@ -320,9 +326,7 @@ fun AddCrashScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 DropdownMenuExample(
-                    state = state,
-                    onValueChange = actions::setFace,
-                    label = "Impact face"
+                    state = state, onValueChange = actions::setFace, label = "Impact face"
                 )
                 IconButton(onClick = { /*nothing*/ }) {
                     Icon(
@@ -441,25 +445,24 @@ fun AddCrashScreen(
     }
     when {
         openAlertDialog.value -> {
-            AlertDialogExample(
-                onDismissRequest = {
-                    openAlertDialog.value = false
-                    if (mode == Mode.Manual && navController != null) {
-                        navController.navigateUp()
-                    } else {
-                        val intent = Intent(ctx, MainActivity::class.java)
-                        ctx.startActivity(intent)
-                    }
-                    //navController?.navigateUp()
-                },
+            AlertDialogExample(onDismissRequest = {
+                openAlertDialog.value = false
+                if (mode == Mode.Manual && navController != null) {
+                    navController.navigateUp()
+                } else {
+                    val intent = Intent(ctx, MainActivity::class.java)
+                    ctx.startActivity(intent)
+                }
+                //navController?.navigateUp()
+            },
                 onConfirmation = {
                     openAlertDialog.value = false
                     addEvent(
                         "Crash",
                         state.exclamation,
                         state.position?.displayName!!,
-                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse("${state.date} ${state.time}")!!.time,
-                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse("${state.date} ${state.time}")!!.time,
+                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).parse("${state.date} ${state.time}")!!.time,
+                        SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).parse("${state.date} ${state.time}")!!.time
                     )
                     if (mode == Mode.Manual && navController != null) {
                         navController.navigateUp()
@@ -478,15 +481,20 @@ fun AddCrashScreen(
 }
 
 @Composable
-fun DropdownMenuExample(state: AddCrashState, onValueChange: KFunction1<String, Unit>, label: String) {
+fun DropdownMenuExample(
+    state: AddCrashState, onValueChange: KFunction1<String, Unit>, label: String
+) {
     var expanded by remember { mutableStateOf(false) }
     val options = listOf("Left", "Right", "Up", "Down", "Front", "Back")
     var selectedOption by remember { mutableStateOf(options[0]) }
 
-    Box(modifier = Modifier.padding(16.dp).width(284.dp),) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .width(284.dp)
+    ) {
         Column {
-            OutlinedTextField(
-                value = state.face,
+            OutlinedTextField(value = state.face,
                 onValueChange = {},
                 label = { Text(label) },
                 readOnly = true,
@@ -506,14 +514,11 @@ fun DropdownMenuExample(state: AddCrashState, onValueChange: KFunction1<String, 
                 modifier = Modifier.fillMaxWidth()
             ) {
                 options.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedOption = option
-                            onValueChange(option)
-                            expanded = false
-                        }
-                    )
+                    DropdownMenuItem(text = { Text(option) }, onClick = {
+                        selectedOption = option
+                        onValueChange(option)
+                        expanded = false
+                    })
                 }
             }
         }
