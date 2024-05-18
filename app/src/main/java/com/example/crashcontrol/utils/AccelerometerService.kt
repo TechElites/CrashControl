@@ -71,11 +71,14 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
                         + currentValues.y.toDouble().pow(2.0)
                         + currentValues.z.toDouble().pow(2.0)
             )
-            val precision = DecimalFormat("0.00")
-            val ldAccRound = java.lang.Double.parseDouble(precision.format(loAccelerationReader))
+            //val precision = DecimalFormat("0.00")
+            //val ldAccRound: Double? = (precision.format(loAccelerationReader)).toDoubleOrNull()
+            val ldAccRound: Double = loAccelerationReader
             // precision/fall detection and more than 1000ms after last fall
-            if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
-                crash()
+            if (ldAccRound != null) {
+                if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
+                    crash()
+                }
             }
         }
     }

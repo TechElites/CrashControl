@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.update
 data class AddCrashState(
     val position: OSMPlace? = null,
     val exclamation: String = "",
-    val favourite: Boolean = true,
+    val favourite: Boolean = false,
     val date: String = "",
     val time: String = "",
     val face: String = ""
 
 ) {
-    val canSubmit get() = date.isNotBlank() && date.isNotBlank() && date.isNotBlank()
+    val canSubmit get() = date.isNotBlank() && exclamation.isNotBlank()// && position != null
 
     fun toCrash() = Crash(
         latitude = position?.latitude ?: 0.0,

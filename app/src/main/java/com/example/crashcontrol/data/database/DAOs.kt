@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CrashesDAO {
-    @Query("SELECT * FROM crash ORDER BY date ASC")
+    @Query("SELECT * FROM crash ORDER BY date, time ASC")
     fun getAll(): Flow<List<Crash>>
 
     @Upsert

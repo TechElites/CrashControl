@@ -113,7 +113,9 @@ fun CrashControlNavGraph(
                     crash = crash,
                     state = state,
                     actions = crashDetailsVm.actions,
-                    onSubmit = { crashesVm.addCrash(state.toCrash()) }
+                    onSubmit = { crashesVm.addCrash(state.toCrash()) },
+                    onDelete = { crashesVm.deleteCrash(crash) },
+                    navController = navController
                 )
             }
         }
@@ -125,7 +127,8 @@ fun CrashControlNavGraph(
                     state = state,
                     actions = addCrashVm.actions,
                     onSubmit = { crashesVm.addCrash(state.toCrash()) },
-                    navController = navController
+                    navController = navController,
+                    locationService = null
                 )
             }
         }
