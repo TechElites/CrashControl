@@ -148,7 +148,7 @@ fun CrashControlNavGraph(
         with(CrashControlRoute.Profile) {
             composable(route) {
                 val profileVm = koinViewModel<ProfileViewModel>()
-                val state by profileVm.state.collectAsState(initial = ProfileState(false))
+                val state by profileVm.state.collectAsState(initial = ProfileState(true))
                 ProfileScreen(
                     navController = navController,
                     state = state,

@@ -16,7 +16,6 @@ limitations under the License.
 
 package com.example.crashcontrol.utils
 
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +23,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-data class User(
+data class Account(
     val id: String = "",
     val isAnonymous: Boolean = true
 )
@@ -37,11 +36,12 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     val hasUser: Boolean
         get() = auth.currentUser != null
 
-    val currentUser: Flow<User>
+    val currentAccount: Flow<Account>
         get() = callbackFlow {
             val listener =
                 FirebaseAuth.AuthStateListener { auth ->
-                    this.trySend(auth.currentUser?.let { User(it.uid, it.isAnonymous) } ?: User())
+                    this.trySend(auth.currentUser?.let { Account(it.uid, it.isAnonymous) }
+                        ?: Account())
                 }
             auth.addAuthStateListener(listener)
             awaitClose { auth.removeAuthStateListener(listener) }
@@ -75,9 +75,5 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
 
         // Sign the user back in anonymously.
         createAnonymousAccount()
-    }
-
-    companion object {
-        private const val LINK_ACCOUNT_TRACE = "linkAccount"
     }
 }

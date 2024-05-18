@@ -24,4 +24,11 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="birthday">Birthday</string>
+    <string name="picture">Picture</string>
+    <string name="empty_fields_error">Some fields are empty</string>
+    <string name="loading">Loading…</string>
 </resources>

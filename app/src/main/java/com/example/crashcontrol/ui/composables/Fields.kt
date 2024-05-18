@@ -55,7 +55,7 @@ fun BasicField(
             modifier = modifier,
             value = value,
             onValueChange = { onNewValue(it) },
-            placeholder = { Text(stringResource(text)) }
+            label = { Text(stringResource(text)) }
         )
     }
 }
@@ -76,11 +76,31 @@ fun IconButtonField(
             modifier = modifier,
             value = value,
             onValueChange = { onNewValue(it) },
-            placeholder = { Text(stringResource(text)) }
+            label = { Text(stringResource(text)) }
         )
         IconButton(onClick = { onButtonClicked() }) {
             Icon(imageVector = icon, contentDescription = "Icon")
         }
+    }
+}
+
+@Composable
+fun NumberField(
+    @StringRes text: Int,
+    value: Int,
+    onNewValue: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedTextField(
+            modifier = modifier,
+            value = value.toString(),
+            onValueChange = { onNewValue(it.toIntOrNull() ?: 0) },
+            label = { Text(stringResource(text)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
     }
 }
 
@@ -93,7 +113,7 @@ fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier =
             modifier = modifier,
             value = value,
             onValueChange = { onNewValue(it) },
-            placeholder = { Text(stringResource(R.string.email)) },
+            label = { Text(stringResource(R.string.email)) },
             leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") }
         )
     }
@@ -136,7 +156,7 @@ private fun PasswordField(
             modifier = modifier,
             value = value,
             onValueChange = { onNewValue(it) },
-            placeholder = { Text(text = stringResource(placeholder)) },
+            label = { Text(text = stringResource(placeholder)) },
             leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
             trailingIcon = {
                 IconButton(onClick = { isVisible = !isVisible }) {

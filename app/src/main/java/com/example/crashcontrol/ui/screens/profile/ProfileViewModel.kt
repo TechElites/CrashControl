@@ -1,20 +1,26 @@
 package com.example.crashcontrol.ui.screens.profile
 
+import com.example.crashcontrol.data.remote.FBDataSource
+import com.example.crashcontrol.data.remote.FBUser
 import com.example.crashcontrol.utils.AccountService
 import com.example.crashcontrol.utils.AuthViewModel
 import kotlinx.coroutines.flow.map
 
-data class ProfileState(val isAnonymousAccount: Boolean = true)
+data class ProfileState(
+    val isAnonymousAccount: Boolean = true,
+)
 
 interface ProfileActions {
     fun onSignOutClick()
     fun onDeleteMyAccountClick()
+    suspend fun loadCurrentUser(): FBUser?
 }
 
 class ProfileViewModel(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val fbDataSource: FBDataSource
 ) : AuthViewModel() {
-    val state = accountService.currentUser.map {
+    val state = accountService.currentAccount.map {
         ProfileState(it.isAnonymous)
     }
 
@@ -28,8 +34,13 @@ class ProfileViewModel(
 
         override fun onDeleteMyAccountClick() {
             launchCatching {
+                fbDataSource.deleteUser(accountService.currentUserId)
                 accountService.deleteAccount()
             }
+        }
+
+        override suspend fun loadCurrentUser(): FBUser? {
+            return fbDataSource.loadUser(accountService.currentUserId)
         }
     }
 }

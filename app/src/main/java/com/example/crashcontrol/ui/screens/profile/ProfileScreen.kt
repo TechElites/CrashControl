@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,11 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.crashcontrol.R
+import com.example.crashcontrol.data.remote.FBUser
 import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.composables.DangerousCardEditor
 import com.example.crashcontrol.ui.composables.DialogCancelButton
 import com.example.crashcontrol.ui.composables.DialogConfirmButton
 import com.example.crashcontrol.ui.composables.RegularCardEditor
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
@@ -38,6 +41,12 @@ fun ProfileScreen(
     state: ProfileState,
     actions: ProfileActions
 ) {
+    var user by remember { mutableStateOf<FBUser?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    fun loadUser() = coroutineScope.launch {
+        user = actions.loadCurrentUser()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,6 +74,17 @@ fun ProfileScreen(
                 navController.navigate(CrashControlRoute.SignUp.route)
             }
         } else {
+            loadUser()
+            if (user != null) {
+                user?.email?.let { Text(text = "Email: $it") }
+                user?.username?.let { Text(text = "Username: $it") }
+                user?.name?.let { Text(text = "Name: $it") }
+                user?.surname?.let { Text(text = "Surname: $it") }
+                user?.birthday?.let { Text(text = "Birthday: $it") }
+                user?.picture?.let { Text(text = "Picture: $it") }
+            } else {
+                Text(text = stringResource(R.string.loading))
+            }
             SignOutCard { actions.onSignOutClick() }
             DeleteMyAccountCard { actions.onDeleteMyAccountClick() }
         }

@@ -43,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.crashcontrol.R
 import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.composables.BasicButton
+import com.example.crashcontrol.ui.composables.BasicField
 import com.example.crashcontrol.ui.composables.EmailField
 import com.example.crashcontrol.ui.composables.PasswordField
 import com.example.crashcontrol.ui.composables.RepeatPasswordField
@@ -73,7 +74,13 @@ fun SignUpScreen(
             val fieldModifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 4.dp)
+
             EmailField(state.email, actions::setEmail, fieldModifier)
+            BasicField(R.string.username, state.username, actions::setUsername, fieldModifier)
+            BasicField(R.string.name, state.name, actions::setName, fieldModifier)
+            BasicField(R.string.surname, state.surname, actions::setSurname, fieldModifier)
+            BasicField(R.string.birthday, state.birthday, actions::setBirthday, fieldModifier)
+            BasicField(R.string.picture, state.picture, actions::setPicture, fieldModifier)
             PasswordField(state.password, actions::setPassword, fieldModifier)
             RepeatPasswordField(state.repeatPassword, actions::setRepeatedPassword, fieldModifier)
 
@@ -93,6 +100,10 @@ fun SignUpScreen(
                 }
                 if (!state.password.passwordMatches(state.repeatPassword)) {
                     snackBarMessage = R.string.password_match_error
+                    showWrongInputAlert = true
+                }
+                if (!state.canSubmit()) {
+                    snackBarMessage = R.string.empty_fields_error
                     showWrongInputAlert = true
                 }
                 if (!showWrongInputAlert) {

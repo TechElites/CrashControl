@@ -45,9 +45,7 @@ open class AuthViewModel() : ViewModel() {
     fun launchCatching(snackbar: Boolean = true, block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(
             CoroutineExceptionHandler { _, throwable ->
-                if (snackbar) {
-
-                }
+                throwable.printStackTrace()
             },
             block = block
         )
