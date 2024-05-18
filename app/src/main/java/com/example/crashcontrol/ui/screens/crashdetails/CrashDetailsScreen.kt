@@ -111,6 +111,7 @@ fun CrashDetailsScreen(
     }
 
     val openAlertDialog = remember { mutableStateOf(false) }
+    val fav = remember { mutableStateOf(crash.favourite) }
 
     Scaffold(
         floatingActionButton = {
@@ -118,13 +119,14 @@ fun CrashDetailsScreen(
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.primary,
                     onClick = {
+                        fav.value = !fav.value
+                        actions.setFavourite(fav.value)
                         openAlertDialog.value = true
-                        actions.setFavourite(!state.favourite)
                     }) {
                     Icon(
                         Icons.Outlined.Favorite,
-                        "Remove from favourites",
-                        tint = if (state.favourite) {
+                        "Toggle favourites",
+                        tint = if (fav.value) {
                             Color.Black
                         } else {
                             Color.White
@@ -221,10 +223,11 @@ fun CrashDetailsScreen(
     }
     when {
         openAlertDialog.value -> {
-            com.example.crashcontrol.ui.screens.addcrash.AlertDialogExample(
+            AlertDialogExample(
                 onDismissRequest = {
+                    fav.value = !fav.value
+                    actions.setFavourite(fav.value)
                     openAlertDialog.value = false
-                    actions.setFavourite(!state.favourite)
                 },
                 onConfirmation = {
                     openAlertDialog.value = false
