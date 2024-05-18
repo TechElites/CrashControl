@@ -6,13 +6,11 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.provider.CalendarContract
 import android.provider.Settings
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -24,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
@@ -33,6 +32,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -84,6 +85,7 @@ import com.example.crashcontrol.utils.LocationService
 import com.example.crashcontrol.utils.PermissionStatus
 import com.example.crashcontrol.utils.StartMonitoringResult
 import com.example.crashcontrol.utils.rememberPermission
+import kotlin.reflect.KFunction1
 
 enum class Mode { Automatic, Manual }
 
@@ -199,19 +201,16 @@ fun AddCrashScreen(
 
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
-                if (!state.canSubmit) return@FloatingActionButton
-                onSubmit()
-                openAlertDialog.value = true
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }, floatingActionButton = {
+        FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
+            if (!state.canSubmit) return@FloatingActionButton
+            onSubmit()
+            openAlertDialog.value = true
 
-            }) {
-                Icon(Icons.Filled.Check, contentDescription = "Add New Crash")
-            }
+        }) {
+            Icon(Icons.Filled.Check, contentDescription = "Add New Crash")
         }
-    ) { contentPadding ->
+    }) { contentPadding ->
         Column(
             modifier = Modifier
                 .padding(contentPadding)
@@ -237,7 +236,7 @@ fun AddCrashScreen(
                     },
                     onValueChange = { placeText = it },
                     singleLine = true,
-                    modifier = Modifier.width(287.dp),
+                    modifier = Modifier.width(284.dp),
                 )
                 IconButton(onClick = ::searchPlaces) {
                     Icon(Icons.Outlined.Search, "Search")
@@ -253,7 +252,7 @@ fun AddCrashScreen(
                             placeNotFound -> "Place not found"
                             else -> "-"
                         }
-                    }", modifier = Modifier.width(287.dp)
+                    }", modifier = Modifier.width(284.dp)
                 )
             }
             Row(
@@ -264,18 +263,13 @@ fun AddCrashScreen(
                         if (navController == null) {
                             val latitude = locationService?.coordinates?.latitude
                             val longitude = locationService?.coordinates?.longitude
-                            place =
-                                OSMPlace(
-                                    0,
-                                    latitude!!,
-                                    longitude!!,
-                                    "Current location"
-                                )
+                            place = OSMPlace(
+                                0, latitude!!, longitude!!, "Current location"
+                            )
                         }
                         actions.setPosition(place!!)
                         placeText = place?.displayName.toString()
-                    },
-                    enabled = (place != null || navController == null)
+                    }, enabled = (place != null || navController == null)
                 ) {
                     Text("Accept this position")
                 }
@@ -283,8 +277,7 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.date,
+                OutlinedTextField(value = state.date,
                     onValueChange = actions::setDate,
                     label = { Text("Date") })
                 IconButton(onClick = { showDatePicker = true }) {
@@ -298,8 +291,7 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(
-                    value = state.time,
+                OutlinedTextField(value = state.time,
                     onValueChange = actions::setTime,
                     label = { Text("Time") })
                 IconButton(onClick = { showTimePicker = true }) {
@@ -327,9 +319,11 @@ fun AddCrashScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedTextField(value = state.face,
+                DropdownMenuExample(
+                    state = state,
                     onValueChange = actions::setFace,
-                    label = { Text("Impact face") })
+                    label = "Impact face"
+                )
                 IconButton(onClick = { /*nothing*/ }) {
                     Icon(
                         Icons.Filled.Build,
@@ -338,72 +332,52 @@ fun AddCrashScreen(
                     )
                 }
             }
-            Text("Latitude: ${locationService?.coordinates?.latitude ?: "-"}")
-            Text("Longitude: ${locationService?.coordinates?.longitude ?: "-"}")
-            Text("modalità: $mode")
+            //DropdownMenuExample(state.face, actions::setFace, "Impact face")
 
             // date picker component
             if (showDatePicker) {
-                DatePickerDialog(
-                    onDismissRequest = { /*TODO*/ },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                val selectedDate = Calendar.getInstance().apply {
-                                    timeInMillis =
-                                        if (datePickerState.selectedDateMillis == null || datePickerState.selectedDateMillis == 0L) {
-                                            System.currentTimeMillis()
-                                        } else {
-                                            datePickerState.selectedDateMillis!!
-                                        }
+                DatePickerDialog(onDismissRequest = { /*TODO*/ }, confirmButton = {
+                    TextButton(onClick = {
+                        val selectedDate = Calendar.getInstance().apply {
+                            timeInMillis =
+                                if (datePickerState.selectedDateMillis == null || datePickerState.selectedDateMillis == 0L) {
+                                    System.currentTimeMillis()
+                                } else {
+                                    datePickerState.selectedDateMillis!!
                                 }
-                                val formatter = SimpleDateFormat("dd/MM/yyyy")
-                                val calendar = Calendar.getInstance()
-                                calendar.timeInMillis = selectedDate.timeInMillis
-                                actions.setDate(formatter.format(calendar.time))
-                                showDatePicker = false
-                            }
-                        ) { Text("OK") }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = {
-                                showDatePicker = false
-                            }
-                        ) { Text("Cancel") }
-                    }
-                )
-                {
+                        }
+                        val formatter = SimpleDateFormat("dd/MM/yyyy")
+                        val calendar = Calendar.getInstance()
+                        calendar.timeInMillis = selectedDate.timeInMillis
+                        actions.setDate(formatter.format(calendar.time))
+                        showDatePicker = false
+                    }) { Text("OK") }
+                }, dismissButton = {
+                    TextButton(onClick = {
+                        showDatePicker = false
+                    }) { Text("Cancel") }
+                }) {
                     DatePicker(state = datePickerState)
                 }
             }
 
             // time picker component
             if (showTimePicker) {
-                TimePickerDialog(
-                    onDismissRequest = { /*TODO*/ },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                val f: NumberFormat = DecimalFormat("00")
-                                actions.setTime(
-                                    f.format(timePickerState.hour).toString() + ":" + f.format(
-                                        timePickerState.minute
-                                    ).toString()
-                                )
-                                showTimePicker = false
-                            }
-                        ) { Text("OK") }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = {
-                                showTimePicker = false
-                            }
-                        ) { Text("Cancel") }
-                    }
-                )
-                {
+                TimePickerDialog(onDismissRequest = { /*TODO*/ }, confirmButton = {
+                    TextButton(onClick = {
+                        val f: NumberFormat = DecimalFormat("00")
+                        actions.setTime(
+                            f.format(timePickerState.hour).toString() + ":" + f.format(
+                                timePickerState.minute
+                            ).toString()
+                        )
+                        showTimePicker = false
+                    }) { Text("OK") }
+                }, dismissButton = {
+                    TextButton(onClick = {
+                        showTimePicker = false
+                    }) { Text("Cancel") }
+                }) {
                     TimePicker(state = timePickerState)
                 }
             }
@@ -504,6 +478,49 @@ fun AddCrashScreen(
 }
 
 @Composable
+fun DropdownMenuExample(state: AddCrashState, onValueChange: KFunction1<String, Unit>, label: String) {
+    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("Left", "Right", "Up", "Down", "Front", "Back")
+    var selectedOption by remember { mutableStateOf(options[0]) }
+
+    Box(modifier = Modifier.padding(16.dp).width(284.dp),) {
+        Column {
+            OutlinedTextField(
+                value = state.face,
+                onValueChange = {},
+                label = { Text(label) },
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Dropdown Icon"
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedOption = option
+                            onValueChange(option)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun TimePickerDialog(
     title: String = "Select Time",
     onDismissRequest: () -> Unit,
@@ -525,8 +542,7 @@ fun TimePickerDialog(
                 .width(IntrinsicSize.Min)
                 .height(IntrinsicSize.Min)
                 .background(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = containerColor
+                    shape = MaterialTheme.shapes.extraLarge, color = containerColor
                 ),
             color = containerColor
         ) {
@@ -565,36 +581,25 @@ fun AlertDialogExample(
     dialogText: String,
     icon: ImageVector,
 ) {
-    AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Example Icon")
-        },
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text("Confirm")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text("Dismiss")
-            }
+    AlertDialog(icon = {
+        Icon(icon, contentDescription = "Example Icon")
+    }, title = {
+        Text(text = dialogTitle)
+    }, text = {
+        Text(text = dialogText)
+    }, onDismissRequest = {
+        onDismissRequest()
+    }, confirmButton = {
+        TextButton(onClick = {
+            onConfirmation()
+        }) {
+            Text("Confirm")
         }
-    )
+    }, dismissButton = {
+        TextButton(onClick = {
+            onDismissRequest()
+        }) {
+            Text("Dismiss")
+        }
+    })
 }
