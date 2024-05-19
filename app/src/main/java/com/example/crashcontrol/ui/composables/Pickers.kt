@@ -1,9 +1,11 @@
 package com.example.crashcontrol.ui.composables
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -30,7 +33,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +52,13 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.remote.OSMDataSource
 import com.example.crashcontrol.data.remote.OSMPlace
+import com.example.crashcontrol.ui.screens.addcrash.AddCrashActions
 import com.example.crashcontrol.ui.screens.addcrash.Mode
+import com.example.crashcontrol.utils.Coordinates
+import com.example.crashcontrol.utils.LocationService
+import com.example.crashcontrol.utils.PermissionStatus
+import com.example.crashcontrol.utils.StartMonitoringResult
+import com.example.crashcontrol.utils.rememberPermission
 import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction1
 
@@ -55,18 +66,34 @@ import kotlin.reflect.KFunction1
 fun PositionPicker(
     snackbarHost: SnackbarHostState,
     osmDataSource: OSMDataSource,
-    mode: Mode,
-    onSelect: (OSMPlace) -> Unit,
+    locationService: LocationService?,
+    snackbarHostState: SnackbarHostState,
+    actions: AddCrashActions,
+    ctx: Context,
+    mode: Mode
 ) {
-    // !TODO: searching for a position now returns no results
-    val ctx = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
+    var placesListexpanded by remember { mutableStateOf(false) }
     var placeText by remember { mutableStateOf("") }
-    if (mode == Mode.Automatic) {
-        placeText = ctx.getString(R.string.current_position)
+    var placeFound: OSMPlace? by remember { mutableStateOf<OSMPlace?>(null) }
+    var showLocationDisabledAlert by remember { mutableStateOf(false) }
+    var showPermissionDeniedAlert by remember { mutableStateOf(false) }
+    var showPermissionPermanentlyDeniedSnackbar by remember { mutableStateOf(false) }
+    val locationPermission = rememberPermission(
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) { status ->
+        when (status) {
+            PermissionStatus.Granted -> {
+                val res = locationService?.requestCurrentLocation()
+                showLocationDisabledAlert = res == StartMonitoringResult.GPSDisabled
+            }
 
+            PermissionStatus.Denied -> showPermissionDeniedAlert = true
+
+            PermissionStatus.PermanentlyDenied -> showPermissionPermanentlyDeniedSnackbar = true
+
+            PermissionStatus.Unknown -> {}
+        }
     }
-    var places: MutableList<OSMPlace> = mutableListOf()
 
     fun isOnline(): Boolean {
         val connectivityManager =
@@ -87,13 +114,50 @@ fun PositionPicker(
         }
     }
 
-    val coroutineScope = rememberCoroutineScope()
-    fun searchPlaces() = coroutineScope.launch {
-        if (isOnline()) {
-            places = osmDataSource.searchPlaces(placeText).toMutableList()
-            if (places.size > 3) {
-                places = places.subList(0, 3)
+    // !TODO: launch this function only one time when the screen opens and then wait for the user to click the button
+    val coroutineScopeRequest = rememberCoroutineScope()
+    fun requestLocation() = coroutineScopeRequest.launch {
+        if (locationPermission.status.isGranted) {
+            val res1 = locationService?.requestCurrentLocation()
+            showLocationDisabledAlert = res1 == StartMonitoringResult.GPSDisabled
+            val latitude = locationService?.coordinates?.latitude
+            val longitude = locationService?.coordinates?.longitude
+            if (latitude == null || longitude == null) {
+                placeText = ctx.getString(R.string.no_place_result)
+                return@launch
             }
+            val place = OSMPlace(0, latitude, longitude, ctx.getString(R.string.current_position))
+            placeText = place.displayName
+            actions.setPosition(place)
+            if (isOnline()) {
+                val placeSearch = osmDataSource.getPlace(Coordinates(latitude, longitude))
+                if (placeSearch.latitude != 0.0) {
+                    placeText = placeSearch.displayName
+                }
+            } else {
+                val res2 = snackbarHost.showSnackbar(
+                    message = ctx.getString(R.string.no_internet_connectivity),
+                    actionLabel = ctx.getString(R.string.open_settings),
+                    duration = SnackbarDuration.Long
+                )
+                if (res2 == SnackbarResult.ActionPerformed) {
+                    openWirelessSettings()
+                }
+            }
+        } else {
+            placeText = ctx.getString(R.string.no_place_result)
+            locationPermission.launchPermissionRequest()
+        }
+    }
+
+    val coroutineScopeSearch = rememberCoroutineScope()
+    fun searchPlaces() = coroutineScopeSearch.launch {
+        if (isOnline()) {
+            val place = osmDataSource.searchPlaces(placeText)
+            if (place.isNotEmpty()) {
+                placeFound = place[0]
+            }
+            placesListexpanded = true
         } else {
             val res = snackbarHost.showSnackbar(
                 message = ctx.getString(R.string.no_internet_connectivity),
@@ -111,20 +175,21 @@ fun PositionPicker(
         icon = {
             IconButton(onClick = {
                 searchPlaces()
-                expanded = true
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = "Icon"
+                    imageVector = Icons.Outlined.Search, contentDescription = "Icon"
                 )
             }
         }
     } else {
         icon = {
-            Icon(
-                imageVector = Icons.Outlined.LocationOn,
-                contentDescription = "Icon"
-            )
+            IconButton(onClick = {
+                requestLocation()
+            }) {
+                Icon(
+                    imageVector = Icons.Outlined.LocationOn, contentDescription = "Icon"
+                )
+            }
         }
     }
 
@@ -135,48 +200,100 @@ fun PositionPicker(
             ) {
                 OutlinedTextField(
                     value = placeText,
-                    onValueChange = { if (mode == Mode.Manual) placeText = it },
+                    modifier = Modifier.width(280.dp),
+                    onValueChange = { placeText = it },
+                    readOnly = mode == Mode.Automatic,
                     label = { Text(stringResource(R.string.position)) },
                     trailingIcon = icon,
+                    singleLine = true
                 )
             }
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
+                expanded = placesListexpanded,
+                onDismissRequest = { placesListexpanded = false },
             ) {
-                places.forEach { option ->
-                    DropdownMenuItem(text = { Text(option.displayName) }, onClick = {
-                        onSelect(option)
-                        placeText = option.displayName
-                        expanded = false
-                    })
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            placeFound?.displayName ?: ctx.getString(R.string.no_place_result)
+                        )
+                    },
+                    onClick = {
+                        if (placeFound != null) {
+                            actions.setPosition(placeFound!!)
+                            placeText = placeFound!!.displayName
+                            placesListexpanded = false
+                        }
+                    }
+                )
+            }
+        }
+    }
+    if (showLocationDisabledAlert) {
+        AlertDialog(title = { Text("Location disabled") },
+            text = { Text("Location must be enabled to get your current location in the app.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    locationService?.openLocationSettings()
+                    showLocationDisabledAlert = false
+                }) {
+                    Text("Enable")
                 }
-                if (places.isEmpty()) {
-                    DropdownMenuItem(
-                        text = { Text(ctx.getString(R.string.no_result)) },
-                        onClick = { expanded = false }
-                    )
+            },
+            dismissButton = {
+                TextButton(onClick = { showLocationDisabledAlert = false }) {
+                    Text("Dismiss")
+                }
+            },
+            onDismissRequest = { showLocationDisabledAlert = false })
+    }
+    if (showPermissionDeniedAlert) {
+        AlertDialog(title = { Text("Location permission denied") },
+            text = { Text("Location permission is required to get your current location in the app.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    locationPermission.launchPermissionRequest()
+                    showPermissionDeniedAlert = false
+                }) {
+                    Text("Grant")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPermissionDeniedAlert = false }) {
+                    Text("Dismiss")
+                }
+            },
+            onDismissRequest = { showPermissionDeniedAlert = false })
+    }
+    if (showPermissionPermanentlyDeniedSnackbar) {
+        LaunchedEffect(snackbarHostState) {
+            val res = snackbarHostState.showSnackbar(
+                "Location permission is required.",
+                "Go to Settings",
+                duration = SnackbarDuration.Long
+            )
+            if (res == SnackbarResult.ActionPerformed) {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", ctx.packageName, null)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                if (intent.resolveActivity(ctx.packageManager) != null) {
+                    ctx.startActivity(intent)
                 }
             }
+            showPermissionPermanentlyDeniedSnackbar = false
         }
     }
 }
 
 @Composable
 fun FacePicker(
-    value: String,
-    onValueChange: KFunction1<String, Unit>,
-    mode: Mode
+    value: String, onValueChange: KFunction1<String, Unit>, mode: Mode
 ) {
     val ctx = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val options = listOf(
-        R.string.left,
-        R.string.right,
-        R.string.up,
-        R.string.down,
-        R.string.front,
-        R.string.back
+        R.string.left, R.string.right, R.string.up, R.string.down, R.string.front, R.string.back
     )
     var selectedOption by remember { mutableStateOf(ctx.getString(options[0])) }
 

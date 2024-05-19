@@ -47,9 +47,6 @@ import com.example.crashcontrol.ui.composables.BasicField
 import com.example.crashcontrol.ui.composables.EmailField
 import com.example.crashcontrol.ui.composables.PasswordField
 import com.example.crashcontrol.ui.composables.RepeatPasswordField
-import com.example.crashcontrol.utils.isValidEmail
-import com.example.crashcontrol.utils.isValidPassword
-import com.example.crashcontrol.utils.passwordMatches
 
 @Composable
 fun SignUpScreen(
@@ -90,23 +87,11 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .padding(16.dp, 8.dp)
             ) {
-                if (!state.email.isValidEmail()) {
-                    snackBarMessage = R.string.email_error
+                val objection = state.canSubmit()
+                if (objection != null) {
+                    snackBarMessage = objection
                     showWrongInputAlert = true
-                }
-                if (!state.password.isValidPassword()) {
-                    snackBarMessage = R.string.password_error
-                    showWrongInputAlert = true
-                }
-                if (!state.password.passwordMatches(state.repeatPassword)) {
-                    snackBarMessage = R.string.password_match_error
-                    showWrongInputAlert = true
-                }
-                if (!state.canSubmit()) {
-                    snackBarMessage = R.string.empty_fields_error
-                    showWrongInputAlert = true
-                }
-                if (!showWrongInputAlert) {
+                } else {
                     actions.signUp()
                     navController.navigate(CrashControlRoute.Profile.route)
                 }

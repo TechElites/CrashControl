@@ -17,6 +17,7 @@ package com.example.crashcontrol.ui.composables
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.example.crashcontrol.R
 
 @Composable
@@ -52,7 +54,7 @@ fun BasicField(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = modifier.width(280.dp),
             value = value,
             onValueChange = { onNewValue(it) },
             label = { Text(stringResource(text)) }
@@ -73,7 +75,8 @@ fun IconButtonField(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = modifier.width(280.dp),
+            singleLine = true,
             value = value,
             onValueChange = { onNewValue(it) },
             label = { Text(stringResource(text)) },
@@ -87,32 +90,13 @@ fun IconButtonField(
 }
 
 @Composable
-fun NumberField(
-    @StringRes text: Int,
-    value: Int,
-    onNewValue: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        OutlinedTextField(
-            modifier = modifier,
-            value = value.toString(),
-            onValueChange = { onNewValue(it.toIntOrNull() ?: 0) },
-            label = { Text(stringResource(text)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-    }
-}
-
-@Composable
 fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = modifier.width(280.dp),
+            singleLine = true,
             value = value,
             onValueChange = { onNewValue(it) },
             label = { Text(stringResource(R.string.email)) },
@@ -155,7 +139,8 @@ private fun PasswordField(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            modifier = modifier,
+            modifier = modifier.width(280.dp),
+            singleLine = true,
             value = value,
             onValueChange = { onNewValue(it) },
             label = { Text(text = stringResource(placeholder)) },

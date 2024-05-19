@@ -19,8 +19,8 @@ data class CrashDetailsState(
 ) {
     fun toCrash() = Crash(
         id = id,
-        latitude = position?.latitude ?: 0.0,
-        longitude = position?.longitude ?: 0.0,
+        latitude = position?.latitude,
+        longitude = position?.longitude,
         exclamation = exclamation,
         favourite = favourite,
         date = date,

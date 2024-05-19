@@ -27,8 +27,10 @@ class OSMDataSource(
         val url = "$baseUrl/?q=$query&format=json&limit=1"
         return httpClient.get(url).body()
     }
-    /*suspend fun getPlace(coordinates: Coordinates): OSMPlace {
-        val url = "$baseUrl/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=json&limit=1"
+
+    suspend fun getPlace(coordinates: Coordinates): OSMPlace {
+        val url =
+            "$baseUrl/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=json&limit=1"
         return httpClient.get(url).body()
-    }*/
+    }
 }

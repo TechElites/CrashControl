@@ -11,7 +11,16 @@ import kotlinx.coroutines.flow.update
 data class SignInState(
     val email: String = "",
     val password: String = ""
-)
+) {
+    fun canSubmit(): Int? {
+        return when {
+            email.isEmpty() || !email.isValidEmail() -> R.string.email_error
+            password.isEmpty() -> R.string.empty_password_error
+            else -> null
+        }
+    }
+
+}
 
 interface SignInActions {
     fun setEmail(newValue: String)

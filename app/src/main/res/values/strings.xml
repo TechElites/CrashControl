@@ -37,7 +37,8 @@
     <string name="open_settings">Open settings</string>
     <string name="position">Position</string>
     <string name="current_position">Current position</string>
-    <string name="no_result">No result</string>
+    <string name="no_place_result">No place found</string>
+    <string name="no_crash_location">Where it has fallen now only rests in your heart</string>
     <string name="time">Time</string>
     <string name="select_time">Select time</string>
     <string name="exclamation">Exclamation</string>

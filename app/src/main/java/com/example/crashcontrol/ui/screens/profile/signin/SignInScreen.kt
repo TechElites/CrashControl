@@ -64,17 +64,11 @@ fun SignInScreen(
                     .fillMaxWidth()
                     .padding(16.dp, 8.dp)
             ) {
-                if (!state.email.isValidEmail()) {
+                val objection = state.canSubmit()
+                if (objection != null) {
+                    snackBarMessage = objection
                     showWrongInputAlert = true
-                    snackBarMessage = R.string.email_error
-                }
-
-                if (state.password.isBlank()) {
-                    showWrongInputAlert = true
-                    snackBarMessage = R.string.empty_password_error
-                }
-
-                if (!showWrongInputAlert) {
+                } else {
                     actions.signIn()
                     navController.navigate(CrashControlRoute.Profile.route)
                 }

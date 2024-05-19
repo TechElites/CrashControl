@@ -1,9 +1,13 @@
 package com.example.crashcontrol.ui.screens.profile.signup
 
+import com.example.crashcontrol.R
 import com.example.crashcontrol.data.remote.FBDataSource
 import com.example.crashcontrol.data.remote.FBUser
 import com.example.crashcontrol.utils.AccountService
 import com.example.crashcontrol.utils.AuthViewModel
+import com.example.crashcontrol.utils.isValidEmail
+import com.example.crashcontrol.utils.isValidPassword
+import com.example.crashcontrol.utils.passwordMatches
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,14 +22,19 @@ data class SignUpState(
     val password: String = "",
     val repeatPassword: String = "",
 ) {
-    fun canSubmit() = email.isNotEmpty()
-            && username.isNotEmpty()
-            && name.isNotEmpty()
-            && surname.isNotEmpty()
-            && birthday.isNotEmpty()
-            && picture.isNotEmpty()
-            && password.isNotEmpty()
-            && repeatPassword.isNotEmpty()
+    fun canSubmit(): Int? {
+        return when {
+            email.isEmpty() || !email.isValidEmail() -> R.string.email_error
+            username.isEmpty()
+                    ||name.isEmpty()
+                    || surname.isEmpty()
+                    || birthday.isEmpty()
+                    || picture.isEmpty() -> R.string.empty_fields_error
+            password.isEmpty() || !password.isValidPassword() -> R.string.password_error
+            repeatPassword.isEmpty() || password.passwordMatches(repeatPassword) -> R.string.password_match_error
+            else -> null
+        }
+    }
 
     fun toFBUser() = FBUser(
         email = email,
