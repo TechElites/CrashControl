@@ -114,7 +114,6 @@ fun PositionPicker(
         }
     }
 
-    // !TODO: launch this function only one time when the screen opens and then wait for the user to click the button
     val coroutineScopeRequest = rememberCoroutineScope()
     fun requestLocation() = coroutineScopeRequest.launch {
         if (locationPermission.status.isGranted) {
@@ -145,8 +144,13 @@ fun PositionPicker(
                 }
             }
         } else {
-            placeText = ctx.getString(R.string.no_place_result)
             locationPermission.launchPermissionRequest()
+        }
+    }
+
+    if (mode == Mode.Automatic) {
+        LaunchedEffect(Unit) {
+            requestLocation()
         }
     }
 
@@ -230,8 +234,8 @@ fun PositionPicker(
         }
     }
     if (showLocationDisabledAlert) {
-        AlertDialog(title = { Text("Location disabled") },
-            text = { Text("Location must be enabled to get your current location in the app.") },
+        AlertDialog(title = { Text(ctx.getString(R.string.location_disabled)) },
+            text = { Text(ctx.getString(R.string.enable_location_for)) },
             confirmButton = {
                 TextButton(onClick = {
                     locationService?.openLocationSettings()
@@ -248,19 +252,19 @@ fun PositionPicker(
             onDismissRequest = { showLocationDisabledAlert = false })
     }
     if (showPermissionDeniedAlert) {
-        AlertDialog(title = { Text("Location permission denied") },
-            text = { Text("Location permission is required to get your current location in the app.") },
+        AlertDialog(title = { Text(ctx.getString(R.string.location_denied)) },
+            text = { Text(ctx.getString(R.string.location_required_for)) },
             confirmButton = {
                 TextButton(onClick = {
                     locationPermission.launchPermissionRequest()
                     showPermissionDeniedAlert = false
                 }) {
-                    Text("Grant")
+                    Text(ctx.getString(R.string.grant))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPermissionDeniedAlert = false }) {
-                    Text("Dismiss")
+                    Text(ctx.getString(R.string.dismiss))
                 }
             },
             onDismissRequest = { showPermissionDeniedAlert = false })
@@ -268,8 +272,8 @@ fun PositionPicker(
     if (showPermissionPermanentlyDeniedSnackbar) {
         LaunchedEffect(snackbarHostState) {
             val res = snackbarHostState.showSnackbar(
-                "Location permission is required.",
-                "Go to Settings",
+                ctx.getString(R.string.location_required),
+                ctx.getString(R.string.open_settings),
                 duration = SnackbarDuration.Long
             )
             if (res == SnackbarResult.ActionPerformed) {

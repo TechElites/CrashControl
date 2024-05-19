@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -25,7 +24,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,7 +40,6 @@ import com.example.crashcontrol.R
 import com.example.crashcontrol.data.models.Theme
 import com.example.crashcontrol.utils.NotificationService
 import com.example.crashcontrol.utils.PermissionStatus
-import com.example.crashcontrol.utils.SendNotificationResult
 import com.example.crashcontrol.utils.rememberPermission
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -54,30 +51,23 @@ fun SettingsScreen(
 ) {
     val ctx = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var showLocationDisabledAlert by remember { mutableStateOf(false) }
-    var showPermissionDeniedAlert by remember { mutableStateOf(false) }
     var showPermissionPermanentlyDeniedSnackbar by remember { mutableStateOf(false) }
     val notificationPermission = rememberPermission(
         Manifest.permission.POST_NOTIFICATIONS
     ) { status ->
         when (status) {
             PermissionStatus.Granted -> {
-                val res = notificationService.requestSendingNotification()
-                showLocationDisabledAlert = res == SendNotificationResult.Disabled
+                notificationService.requestSendingNotification()
             }
 
-            PermissionStatus.Denied -> showPermissionDeniedAlert = true
-
             PermissionStatus.PermanentlyDenied -> showPermissionPermanentlyDeniedSnackbar = true
-
-            PermissionStatus.Unknown -> {}
+            else -> {}
         }
     }
 
     fun requestNotification() {
         if (notificationPermission.status.isGranted) {
-            val res = notificationService.requestSendingNotification()
-            showLocationDisabledAlert = res == SendNotificationResult.Disabled
+            notificationService.requestSendingNotification()
         } else {
             notificationPermission.launchPermissionRequest()
         }
@@ -91,7 +81,7 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "App Theme",
+                text = stringResource(R.string.app_theme),
                 modifier = Modifier.padding(top = 30.dp, bottom = 20.dp),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -126,7 +116,7 @@ fun SettingsScreen(
             }
             Spacer(modifier = Modifier.height(40.dp))
             Text(
-                text = "Get notified in real time of crashes",
+                text = stringResource(R.string.app_notifications),
                 modifier = Modifier.padding(bottom = 10.dp),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -141,18 +131,18 @@ fun SettingsScreen(
                     enabled = !notificationPermission.status.isGranted
                 ) {
                     if (notificationPermission.status.isGranted) {
-                        Text("Enabled")
+                        Text(stringResource(R.string.enabled))
                     } else {
-                        Text("Check permission")
+                        Text(stringResource(R.string.check_permission))
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(40.dp))
-            Text(
-                text = "App Language",
-                modifier = Modifier.padding(bottom = 10.dp),
-                style = MaterialTheme.typography.titleLarge
-            )
+//            Spacer(modifier = Modifier.height(40.dp))
+//            Text(
+//                text = "App Language",
+//                modifier = Modifier.padding(bottom = 10.dp),
+//                style = MaterialTheme.typography.titleLarge
+//            )
 //            var expanded by remember { mutableStateOf(false) }
 //            Row(
 //                Modifier
@@ -200,47 +190,11 @@ fun SettingsScreen(
 //            }
         }
     }
-    if (showLocationDisabledAlert) {
-        AlertDialog(title = { Text("Notifications disabled") },
-            text = { Text("Notifications must be enabled to get notified or your crashes.") },
-            confirmButton = {
-                TextButton(onClick = {
-                    notificationService.openNotificationSettings()
-                    showLocationDisabledAlert = false
-                }) {
-                    Text("Enable")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showLocationDisabledAlert = false }) {
-                    Text("Dismiss")
-                }
-            },
-            onDismissRequest = { showLocationDisabledAlert = false })
-    }
-    if (showPermissionDeniedAlert) {
-        AlertDialog(title = { Text("Notifications permission denied") },
-            text = { Text("Notifications permission is required to get notified or your crashes.") },
-            confirmButton = {
-                TextButton(onClick = {
-                    notificationPermission.launchPermissionRequest()
-                    showPermissionDeniedAlert = false
-                }) {
-                    Text("Grant")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPermissionDeniedAlert = false }) {
-                    Text("Dismiss")
-                }
-            },
-            onDismissRequest = { showPermissionDeniedAlert = false })
-    }
     if (showPermissionPermanentlyDeniedSnackbar) {
         LaunchedEffect(snackbarHostState) {
             val res = snackbarHostState.showSnackbar(
-                "Notifications permission is required.",
-                "Go to Settings",
+                ctx.getString(R.string.notifications_required),
+                ctx.getString(R.string.open_settings),
                 duration = SnackbarDuration.Long
             )
             if (res == SnackbarResult.ActionPerformed) {

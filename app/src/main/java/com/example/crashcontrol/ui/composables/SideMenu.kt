@@ -1,6 +1,5 @@
 package com.example.crashcontrol.ui.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,11 +19,13 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.crashcontrol.R
 import com.example.crashcontrol.ui.CrashControlRoute
 
 @Composable
@@ -41,7 +42,7 @@ fun SideMenu(
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
-                text = "CrashControl",
+                text = stringResource(R.string.app_name),
                 fontSize = 33.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary,
@@ -50,7 +51,7 @@ fun SideMenu(
         }
         Divider()
         NavigationDrawerItem(
-            label = { Text(text = "Go back", fontSize = 20.sp) },
+            label = { Text(text = stringResource(R.string.go_back), fontSize = 20.sp) },
             selected = false,
             onClick = { navController.navigateUp(); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
@@ -62,7 +63,7 @@ fun SideMenu(
             }
         )
         NavigationDrawerItem(
-            label = { Text(text = "Home Page", fontSize = 20.sp) },
+            label = { Text(text = stringResource(R.string.home_page), fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Home,
             onClick = { navController.navigate(CrashControlRoute.Home.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
@@ -74,7 +75,7 @@ fun SideMenu(
             }
         )
         NavigationDrawerItem(
-            label = { Text(text = "Profile Page", fontSize = 20.sp) },
+            label = { Text(text = stringResource(R.string.profile_page), fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Profile,
             onClick = { navController.navigate(CrashControlRoute.Profile.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
@@ -86,7 +87,7 @@ fun SideMenu(
             }
         )
         NavigationDrawerItem(
-            label = { Text(text = "World Map", fontSize = 20.sp) },
+            label = { Text(text = stringResource(R.string.world_map), fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.CrashesMap,
             onClick = { navController.navigate(CrashControlRoute.CrashesMap.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
@@ -98,13 +99,13 @@ fun SideMenu(
             }
         )
         NavigationDrawerItem(
-            label = { Text(text = "Achievements", fontSize = 20.sp) },
-            selected = currentRoute == CrashControlRoute.Achievements,
-            onClick = { navController.navigate(CrashControlRoute.Achievements.route); onItemClick(); },
+            label = { Text(text = stringResource(R.string.settings), fontSize = 20.sp) },
+            selected = currentRoute == CrashControlRoute.Settings,
+            onClick = { navController.navigate(CrashControlRoute.Settings.route); onItemClick(); },
             modifier = Modifier.padding(top = 10.dp, start = 10.dp),
             icon = {
                 Icon(
-                    Icons.Filled.Star, contentDescription = "Achievements",
+                    Icons.Filled.Settings, contentDescription = "Settings",
                     modifier = Modifier.size(30.dp)
                 )
             }

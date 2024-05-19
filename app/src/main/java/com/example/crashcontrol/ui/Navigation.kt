@@ -12,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.crashcontrol.R
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
@@ -35,36 +36,34 @@ import org.koin.compose.koinInject
 
 sealed class CrashControlRoute(
     val route: String,
-    val title: String,
+    val title: Int,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
-    data object Home : CrashControlRoute("crashes", "Crashes")
+    data object Home : CrashControlRoute("crashes", R.string.crashes)
 
     data object CrashDetails : CrashControlRoute(
         "crashes/{crashId}",
-        "Crash Details",
+        R.string.crash_details,
         listOf(navArgument("crashId") { type = NavType.StringType })
     ) {
         fun buildRoute(crashId: String) = "crashes/$crashId"
     }
 
-    data object AddCrash : CrashControlRoute("crashes/add", "Add Crash")
+    data object AddCrash : CrashControlRoute("crashes/add", R.string.add_crash)
 
-    data object Settings : CrashControlRoute("settings", "Settings")
+    data object Settings : CrashControlRoute("settings", R.string.settings)
 
-    data object CrashesMap : CrashControlRoute("map", "Crashes Map")
+    data object CrashesMap : CrashControlRoute("map", R.string.crashes_map)
 
-    data object Profile : CrashControlRoute("profile", "Profile")
+    data object Profile : CrashControlRoute("profile", R.string.profile)
 
-    data object SignIn : CrashControlRoute("signin", "Sign In")
+    data object SignIn : CrashControlRoute("signin", R.string.sign_in)
 
-    data object SignUp : CrashControlRoute("signup", "Sign Up")
+    data object SignUp : CrashControlRoute("signup", R.string.sign_up)
 
-    data object Achievements : CrashControlRoute("achievements", "Achievements")
+    data object Debug : CrashControlRoute("debug", R.string.debug)
 
-    data object Debug : CrashControlRoute("debug", "Debug")
-
-    data object Favourites : CrashControlRoute("favourites", "Favourites")
+    data object Favourites : CrashControlRoute("favourites", R.string.favourites)
 
     companion object {
         val routes =
@@ -77,7 +76,6 @@ sealed class CrashControlRoute(
                 Profile,
                 SignIn,
                 SignUp,
-                Achievements,
                 Debug,
                 Favourites
             )
@@ -178,11 +176,6 @@ fun CrashControlNavGraph(
                     state = state,
                     actions = signUpVm.actions
                 )
-            }
-        }
-        with(CrashControlRoute.Achievements) {
-            composable(route) {
-//                AchievementsScreen()
             }
         }
         with(CrashControlRoute.Debug) {

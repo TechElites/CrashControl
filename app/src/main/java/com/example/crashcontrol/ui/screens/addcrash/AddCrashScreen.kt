@@ -46,7 +46,7 @@ import androidx.navigation.NavHostController
 import com.example.crashcontrol.MainActivity
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.remote.OSMDataSource
-import com.example.crashcontrol.ui.composables.AlertDialog
+import com.example.crashcontrol.ui.composables.BasicAlertDialog
 import com.example.crashcontrol.ui.composables.BasicField
 import com.example.crashcontrol.ui.composables.FacePicker
 import com.example.crashcontrol.ui.composables.IconButtonField
@@ -217,7 +217,7 @@ fun AddCrashScreen(
         }
         when {
             openAlertDialog.value -> {
-                AlertDialog(
+                BasicAlertDialog(
                     onDismissRequest = {
                         openAlertDialog.value = false
                         if (mode == Mode.Manual && navController != null) {

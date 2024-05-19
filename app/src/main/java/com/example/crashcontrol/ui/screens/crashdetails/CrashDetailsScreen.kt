@@ -48,7 +48,7 @@ import androidx.navigation.NavController
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
 import com.example.crashcontrol.data.remote.OSMPlace
-import com.example.crashcontrol.ui.composables.AlertDialog
+import com.example.crashcontrol.ui.composables.BasicAlertDialog
 import com.utsman.osmandcompose.DefaultMapProperties
 import com.utsman.osmandcompose.Marker
 import com.utsman.osmandcompose.MarkerState
@@ -230,7 +230,7 @@ fun CrashDetailsScreen(
     }
     when {
         openAlertDialog.value -> {
-            AlertDialog(
+            BasicAlertDialog(
                 onDismissRequest = {
                     fav.value = !fav.value
                     actions.setFavourite(fav.value)
