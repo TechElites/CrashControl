@@ -82,12 +82,12 @@ val appModule = module {
 
     viewModel { SignInViewModel(get<AccountService>()) }
 
-    viewModel { AddCrashViewModel() }
+    viewModel { AddCrashViewModel(get<AccountService>(), get<FBDataSource>()) }
 
     viewModel { SettingsViewModel(get()) }
 
     viewModel { CrashesViewModel(get()) }
 
-    viewModel { CrashDetailsViewModel() }
+    viewModel { CrashDetailsViewModel(get<AccountService>(), get<FBDataSource>()) }
 }
 

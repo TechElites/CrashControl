@@ -41,7 +41,15 @@ class FBDataSource(database: FirebaseFirestore) {
         } else {
             null
         }
+    }
 
+    suspend fun loadCrash(userId: String): FBCrash? {
+        val document = refToCrashes.document(userId).get().await()
+        return if (document.exists()) {
+            document.toObject(FBCrash::class.java)
+        } else {
+            null
+        }
     }
 
     suspend fun loadCrashes(): Set<FBCrash> {

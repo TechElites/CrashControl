@@ -55,10 +55,6 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         auth.sendPasswordResetEmail(email).await()
     }
 
-    suspend fun createAnonymousAccount() {
-        auth.signInAnonymously().await()
-    }
-
     suspend fun linkAccount(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
     }
@@ -72,8 +68,5 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
             auth.currentUser!!.delete()
         }
         auth.signOut()
-
-        // Sign the user back in anonymously.
-        createAnonymousAccount()
     }
 }

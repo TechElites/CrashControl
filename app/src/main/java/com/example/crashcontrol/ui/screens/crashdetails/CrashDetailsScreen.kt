@@ -124,6 +124,7 @@ fun CrashDetailsScreen(
                 }
                 Spacer(Modifier.size(8.dp))
                 FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
+                    actions.deleteFBCrash()
                     navController.navigateUp()
                     Handler(Looper.getMainLooper()).postDelayed({
                         onDelete()

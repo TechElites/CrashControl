@@ -1,8 +1,10 @@
 package com.example.crashcontrol.ui.screens.crashdetails
 
-import androidx.lifecycle.ViewModel
 import com.example.crashcontrol.data.database.Crash
+import com.example.crashcontrol.data.remote.FBDataSource
 import com.example.crashcontrol.data.remote.OSMPlace
+import com.example.crashcontrol.utils.AccountService
+import com.example.crashcontrol.utils.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -37,12 +39,22 @@ interface CrashDetailsActions {
     fun setDate(date: String)
     fun setTime(time: String)
     fun setFace(face: String)
+    fun deleteFBCrash()
 
 }
 
-class CrashDetailsViewModel : ViewModel() {
+class CrashDetailsViewModel(
+    private val accountService: AccountService,
+    private val fbDataSource: FBDataSource
+) : AuthViewModel() {
     private val _state = MutableStateFlow(CrashDetailsState())
     val state = _state.asStateFlow()
+
+    private val latitude
+        get() = _state.value.position?.latitude
+
+    private val longitude
+        get() = _state.value.position?.longitude
 
     val actions = object : CrashDetailsActions {
 
@@ -66,6 +78,20 @@ class CrashDetailsViewModel : ViewModel() {
 
         override fun setFace(face: String) =
             _state.update { it.copy(face = face) }
+
+        override fun deleteFBCrash() {
+            if (accountService.hasUser) {
+                launchCatching {
+                    val latestCrash = fbDataSource.loadCrash(accountService.currentUserId)
+                    if (latestCrash != null
+                        && latestCrash.latitude == latitude
+                        && latestCrash.longitude == longitude
+                    ) {
+                        fbDataSource.deleteCrash(accountService.currentUserId)
+                    }
+                }
+            }
+        }
 
     }
 }

@@ -106,8 +106,8 @@ fun AddCrashScreen(
                 return@FloatingActionButton
             }
             onSubmit()
+            actions.saveFBCrash()
             openAlertDialog.value = true
-
         }) {
             Icon(Icons.Filled.Check, contentDescription = "Add New Crash")
         }
