@@ -158,7 +158,8 @@ fun CrashControlNavGraph(
                 ProfileScreen(
                     navController = navController,
                     state = state,
-                    actions = profileVm.actions
+                    actions = profileVm.actions,
+                    totalCrashes = crashesState.crashes.size
                 )
             }
         }
