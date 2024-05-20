@@ -51,7 +51,17 @@ fun CrashesMapScreen(
 ) {
     val ctx = LocalContext.current
     val localCrashes = myCrashes.filter { it.latitude != null }
-        .map { FBCrash(ctx.getString(R.string.you), it.latitude!!, it.longitude!!, it.exclamation, it.date, it.time, it.face) }
+        .map {
+            FBCrash(
+                ctx.getString(R.string.you),
+                it.latitude!!,
+                it.longitude!!,
+                it.exclamation,
+                it.date,
+                it.time,
+                it.face
+            )
+        }
     val centerMapOn = remember { mutableStateOf(GeoPoint(44.133331, 12.233333)) }
     val crashes = remember { mutableStateOf(listOf<FBCrash>()) }
     val crashesMarker = remember { mutableStateOf(listOf<MarkerState>()) }
@@ -106,14 +116,17 @@ fun CrashesMapScreen(
 
         OpenStreetMap(
             modifier = Modifier.fillMaxSize(),
-            cameraState = cameraState
+            cameraState = cameraState,
+            onMapClick = {},
+            onMapLongClick = {},
         ) {
             for (i in crashes.value.indices) {
                 Marker(
                     state = crashesMarker.value[i],
                     icon = crashesIcons.value[i],
                     title = crashes.value[i].exclamation,
-                    snippet = crashes.value[i].date
+                    snippet = crashes.value[i].date,
+                    onClick = { false }
                 ) {
                     Column(
                         modifier = Modifier

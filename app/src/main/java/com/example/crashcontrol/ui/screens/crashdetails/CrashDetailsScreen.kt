@@ -169,11 +169,14 @@ fun CrashDetailsScreen(
                         .width(300.dp)
                 ) {
                     OpenStreetMap(
-                        cameraState = cameraState, properties = mapProperties
+                        cameraState = cameraState, properties = mapProperties,
+                        onMapClick = {},
+                        onMapLongClick = {},
                     ) {
                         Marker(
                             state = crashesMarker,
                             icon = crashesIcons,
+                            onClick = { false }
                         ) {}
                     }
                 }
