@@ -1,6 +1,8 @@
 package com.example.crashcontrol.ui.screens.addcrash
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.provider.CalendarContract
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -90,7 +92,9 @@ fun AddCrashScreen(
             data = CalendarContract.Events.CONTENT_URI
             putExtra(CalendarContract.Events.TITLE, title)
             putExtra(CalendarContract.Events.DESCRIPTION, exclamation)
-            putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+            if (location.isNotEmpty()) {
+                putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+            }
             putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
             putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
         }
@@ -140,20 +144,16 @@ fun AddCrashScreen(
                     mode = mode
                 )
             }
-            IconButtonField(
-                text = R.string.date,
+            IconButtonField(text = R.string.date,
                 icon = Icons.Filled.DateRange,
                 value = state.date,
                 onNewValue = actions::setDate,
-                onButtonClicked = { if (mode == Mode.Manual) showDatePicker = true }
-            )
-            IconButtonField(
-                text = R.string.time,
+                onButtonClicked = { if (mode == Mode.Manual) showDatePicker = true })
+            IconButtonField(text = R.string.time,
                 icon = Icons.Filled.DateRange,
                 value = state.time,
                 onNewValue = actions::setTime,
-                onButtonClicked = { if (mode == Mode.Manual) showTimePicker = true }
-            )
+                onButtonClicked = { if (mode == Mode.Manual) showTimePicker = true })
             BasicField(
                 text = R.string.exclamation,
                 value = state.exclamation,
@@ -163,9 +163,7 @@ fun AddCrashScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FacePicker(
-                    value = state.face,
-                    onValueChange = actions::setFace,
-                    mode = mode
+                    value = state.face, onValueChange = actions::setFace, mode = mode
                 )
             }
 
@@ -232,19 +230,21 @@ fun AddCrashScreen(
                         addEvent(
                             "Crash",
                             state.exclamation,
-                            state.position?.displayName!!,
-                            SimpleDateFormat(
-                                "dd/MM/yyyy HH:mm:ss", Locale.getDefault()
-                            ).parse("${state.date} ${state.time}")!!.time,
-                            SimpleDateFormat(
-                                "dd/MM/yyyy HH:mm:ss", Locale.getDefault()
-                            ).parse("${state.date} ${state.time}")!!.time
+                            location = if (state.position != null) {
+                                state.position.displayName
+                            } else {
+                                ""
+                            },
+                            SimpleDateFormat("dd/MM/yyyy HH:mm").parse("${state.date} ${state.time}")!!.time,
+                            SimpleDateFormat("dd/MM/yyyy HH:mm").parse("${state.date} ${state.time}")!!.time
                         )
                         if (mode == Mode.Manual && navController != null) {
                             navController.navigateUp()
                         } else {
                             val intent = Intent(ctx, MainActivity::class.java)
-                            ctx.startActivity(intent)
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                ctx.startActivity(intent)
+                            }, 1500)
                         }
                     },
                     dialogTitle = "Add to Calendar",

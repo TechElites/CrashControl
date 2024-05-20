@@ -16,6 +16,7 @@ import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Random
 import kotlin.math.abs
@@ -78,8 +79,11 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
     }
 
     fun crash() {
-        val date = getDateInstance().format(Date(System.currentTimeMillis()))
-        val time = getTimeInstance().format(Date(System.currentTimeMillis()))
+        /*val date = Date(time)
+        val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+        return format.format(date)*/
+        val date = SimpleDateFormat("dd/MM/yyyy").format(Date(System.currentTimeMillis()))
+        val time = SimpleDateFormat("hh:mm").format(Date(System.currentTimeMillis()))
         val face = getImpactFace(currentValues)
         lastMovementCrash = System.currentTimeMillis()
         lastCrash = Crash(0, 0.0, 0.0, "", false, date, time, face)

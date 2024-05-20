@@ -22,10 +22,10 @@ data class Crash(
     val favourite: Boolean = false,
 
     @ColumnInfo
-    val date: Long,
+    val date: String,
 
     @ColumnInfo
-    val time: Long,
+    val time: String,
 
     @ColumnInfo
     val face: String
