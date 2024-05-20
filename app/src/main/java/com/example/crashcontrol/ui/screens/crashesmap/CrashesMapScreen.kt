@@ -61,7 +61,8 @@ fun CrashesMapScreen(
     val coroutineScopeRequest = rememberCoroutineScope()
     fun requestCrashes() = coroutineScopeRequest.launch {
         if (accountService.hasUser) {
-            val remoteCrashes = fbDataSource.loadCrashes().filter { localCrashes.contains(it) }
+            val myRemoteCrash = fbDataSource.loadCrash(accountService.currentUserId)
+            val remoteCrashes = fbDataSource.loadCrashes().filter { it != myRemoteCrash }
             crashes.value = localCrashes + remoteCrashes.toList()
             isLoading.value = false
         } else {
@@ -82,11 +83,7 @@ fun CrashesMapScreen(
             CircularProgressIndicator()
         }
     } else if (crashes.value.isNotEmpty()) {
-        val latestCrash = if (myCrashes.isNotEmpty())
-            localCrashes[0]
-        else
-            crashes.value[0]
-
+        val latestCrash = crashes.value[0]
         centerMapOn.value = GeoPoint(latestCrash.latitude, latestCrash.longitude)
 
         crashesMarker.value = crashes.value.map { crash ->
