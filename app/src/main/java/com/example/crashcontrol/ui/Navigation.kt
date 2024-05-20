@@ -145,7 +145,10 @@ fun CrashControlNavGraph(
             composable(route) {
                 val fbDataSource = koinInject<FBDataSource>()
                 val accountService = koinInject<AccountService>()
-                CrashesMapScreen(fbDataSource, accountService)
+                CrashesMapScreen(
+                    crashesState.crashes,
+                    fbDataSource, accountService
+                )
             }
         }
         with(CrashControlRoute.Profile) {

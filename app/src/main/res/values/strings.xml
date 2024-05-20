@@ -77,4 +77,5 @@
     <string name="username">Username</string>
     <string name="world_map">World map</string>
     <string name="no_map_crashes">Welp looks like everyone got lucky.\nWe will get you one day >:(</string>
+    <string name="you">You</string>
 </resources>

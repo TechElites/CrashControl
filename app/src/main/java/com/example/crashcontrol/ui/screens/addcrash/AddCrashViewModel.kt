@@ -86,7 +86,10 @@ class AddCrashViewModel(
         override fun saveFBCrash() {
             if (position != null && accountService.hasUser) {
                 launchCatching {
-                    fbDataSource.saveCrash(accountService.currentUserId, _state.value.toFBCrash())
+                    val user = fbDataSource.loadUser(accountService.currentUserId)
+                    val crash = _state.value.toFBCrash()
+                    crash.username = user?.username ?: "Unknown"
+                    fbDataSource.saveCrash(accountService.currentUserId, crash)
                 }
             }
         }

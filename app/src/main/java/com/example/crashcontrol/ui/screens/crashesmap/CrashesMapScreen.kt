@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crashcontrol.R
+import com.example.crashcontrol.data.database.Crash
 import com.example.crashcontrol.data.remote.FBCrash
 import com.example.crashcontrol.data.remote.FBDataSource
 import com.example.crashcontrol.utils.AccountService
@@ -44,24 +45,24 @@ import org.osmdroid.util.GeoPoint
  */
 @Composable
 fun CrashesMapScreen(
+    myCrashes: List<Crash>,
     fbDataSource: FBDataSource,
     accountService: AccountService
 ) {
     val ctx = LocalContext.current
+    val localCrashes = myCrashes.filter { it.latitude != null }
+        .map { FBCrash(ctx.getString(R.string.you), it.latitude!!, it.longitude!!, it.exclamation, it.date, it.time, it.face) }
     val centerMapOn = remember { mutableStateOf(GeoPoint(44.133331, 12.233333)) }
     val crashes = remember { mutableStateOf(listOf<FBCrash>()) }
     val crashesMarker = remember { mutableStateOf(listOf<MarkerState>()) }
     val crashesIcons = remember { mutableStateOf(listOf<Drawable>()) }
-    val myLatestCrash = remember { mutableStateOf(true) }
     val isLoading = remember { mutableStateOf(true) }
 
     val coroutineScopeRequest = rememberCoroutineScope()
     fun requestCrashes() = coroutineScopeRequest.launch {
         if (accountService.hasUser) {
-            val crash = fbDataSource.loadCrash(accountService.currentUserId)
-            val allCrashes = fbDataSource.loadCrashes()
-            myLatestCrash.value = crash != null
-            crashes.value = listOfNotNull(crash) + allCrashes
+            val remoteCrashes = fbDataSource.loadCrashes().filter { localCrashes.contains(it) }
+            crashes.value = localCrashes + remoteCrashes.toList()
             isLoading.value = false
         } else {
             isLoading.value = false
@@ -81,7 +82,11 @@ fun CrashesMapScreen(
             CircularProgressIndicator()
         }
     } else if (crashes.value.isNotEmpty()) {
-        val latestCrash = crashes.value[0]
+        val latestCrash = if (myCrashes.isNotEmpty())
+            localCrashes[0]
+        else
+            crashes.value[0]
+
         centerMapOn.value = GeoPoint(latestCrash.latitude, latestCrash.longitude)
 
         crashesMarker.value = crashes.value.map { crash ->
@@ -91,7 +96,7 @@ fun CrashesMapScreen(
         }
 
         crashesIcons.value = crashes.value.map {
-            if (it == latestCrash && myLatestCrash.value)
+            if (localCrashes.contains(it))
                 AppCompatResources.getDrawable(ctx, R.drawable.my_crash_pointer)!!
             else
                 AppCompatResources.getDrawable(ctx, R.drawable.crash_pointer)!!
@@ -122,6 +127,7 @@ fun CrashesMapScreen(
                     ) {
                         Text(text = it.title)
                         Text(text = it.snippet, fontSize = 10.sp)
+                        Text(text = crashes.value[i].username, fontSize = 10.sp)
                     }
                 }
             }
