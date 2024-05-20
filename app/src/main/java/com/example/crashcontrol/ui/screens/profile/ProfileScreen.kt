@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
@@ -49,7 +47,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController, state: ProfileState, actions: ProfileActions, totalCrashes: Int
+    navController: NavHostController,
+    state: ProfileState,
+    actions: ProfileActions,
+    totalCrashes: Int
 ) {
     val ctx = LocalContext.current
     var user by remember { mutableStateOf<FBUser?>(null) }
@@ -61,8 +62,7 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(20.dp))
@@ -114,14 +114,12 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 user?.email?.let { Text(text = it) }
                 Text(text = user?.name + " " + user?.surname)
-                /*user?.name?.let { Text(text = "Name: $it") }
-                user?.surname?.let { Text(text = "Surname: $it") }*/
                 user?.birthday?.let { Text(text = it) }
-                //user?.picture?.let { Text(text = "Picture: $it") }
                 Text(text = "Total crashes: $totalCrashes")
             } else {
                 Text(text = stringResource(R.string.loading))
             }
+            Spacer(modifier = Modifier.weight(1f))
             SignOutCard { actions.onSignOutClick() }
             DeleteMyAccountCard { actions.onDeleteMyAccountClick() }
         }
