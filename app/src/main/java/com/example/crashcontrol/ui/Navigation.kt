@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.crashcontrol.R
+import com.example.crashcontrol.data.remote.FBDataSource
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
@@ -30,6 +31,7 @@ import com.example.crashcontrol.ui.screens.profile.signup.SignUpViewModel
 import com.example.crashcontrol.ui.screens.settings.SettingsScreen
 import com.example.crashcontrol.ui.screens.settings.SettingsViewModel
 import com.example.crashcontrol.utils.AccelerometerService
+import com.example.crashcontrol.utils.AccountService
 import com.example.crashcontrol.utils.NotificationService
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -141,8 +143,9 @@ fun CrashControlNavGraph(
         }
         with(CrashControlRoute.CrashesMap) {
             composable(route) {
-                val latestCrash = crashesState.crashes.maxByOrNull { it.id }
-                CrashesMapScreen(latestCrash)
+                val fbDataSource = koinInject<FBDataSource>()
+                val accountService = koinInject<AccountService>()
+                CrashesMapScreen(fbDataSource, accountService)
             }
         }
         with(CrashControlRoute.Profile) {

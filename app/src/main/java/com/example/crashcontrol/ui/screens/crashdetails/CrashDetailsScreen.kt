@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Delete
@@ -176,22 +174,7 @@ fun CrashDetailsScreen(
                         Marker(
                             state = crashesMarker,
                             icon = crashesIcons,
-                            title = crash.exclamation,
-                            snippet = crash.date
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .size(100.dp)
-                                    .background(
-                                        color = Color.White, shape = RoundedCornerShape(7.dp)
-                                    ),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(text = it.title)
-                                Text(text = it.snippet, fontSize = 10.sp)
-                            }
-                        }
+                        ) {}
                     }
                 }
                 Spacer(Modifier.size(8.dp))
