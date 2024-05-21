@@ -76,6 +76,7 @@ fun CrashesMapScreen(
             crashes.value = localCrashes + remoteCrashes.toList()
             isLoading.value = false
         } else {
+            crashes.value = localCrashes
             isLoading.value = false
         }
     }

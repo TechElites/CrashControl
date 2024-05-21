@@ -120,8 +120,8 @@ fun ProfileScreen(
                 Text(text = stringResource(R.string.loading))
             }
             Spacer(modifier = Modifier.weight(1f))
-            SignOutCard { actions.onSignOutClick() }
-            DeleteMyAccountCard { actions.onDeleteMyAccountClick() }
+            SignOutCard { actions.signOut() }
+            DeleteMyAccountCard { actions.deleteAccount() }
         }
     }
 }

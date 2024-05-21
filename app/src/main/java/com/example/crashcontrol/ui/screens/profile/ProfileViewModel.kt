@@ -11,8 +11,8 @@ data class ProfileState(
 )
 
 interface ProfileActions {
-    fun onSignOutClick()
-    fun onDeleteMyAccountClick()
+    fun signOut()
+    fun deleteAccount()
     suspend fun loadCurrentUser(): FBUser?
 }
 
@@ -26,15 +26,16 @@ class ProfileViewModel(
 
     val actions = object : ProfileActions {
 
-        override fun onSignOutClick() {
+        override fun signOut() {
             launchCatching {
                 accountService.signOut()
             }
         }
 
-        override fun onDeleteMyAccountClick() {
+        override fun deleteAccount() {
             launchCatching {
                 fbDataSource.deleteUser(accountService.currentUserId)
+                fbDataSource.deleteCrash(accountService.currentUserId)
                 accountService.deleteAccount()
             }
         }
