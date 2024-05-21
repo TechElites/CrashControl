@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -19,6 +18,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -93,7 +93,8 @@ fun SideMenu(
             modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
             icon = {
                 Icon(
-                    Icons.Filled.Place, contentDescription = "Map",
+                    painter = painterResource(id = R.drawable.baseline_map_24),
+                    contentDescription = "Map",
                     modifier = Modifier.size(30.dp)
                 )
             }

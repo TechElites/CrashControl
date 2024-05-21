@@ -78,4 +78,10 @@
     <string name="world_map">World map</string>
     <string name="no_map_crashes">Welp looks like everyone got lucky.\nWe will get you one day >:(</string>
     <string name="you">You</string>
+    <string name="add_favourite">Add to favourites</string>
+    <string name="add_favourite_text">Do you wish to add this crash to favourites?</string>
+    <string name="delete_crash">Delete crash</string>
+    <string name="delete_crash_text">Are you sure you want to delete this crash?</string>
+    <string name="delete">Delete</string>
+    <string name="why_signup">Why signing up?</string>
 </resources>

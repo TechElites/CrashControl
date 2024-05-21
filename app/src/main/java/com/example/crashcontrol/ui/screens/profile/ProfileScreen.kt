@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -26,9 +25,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +40,8 @@ import coil.request.ImageRequest
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.remote.FBUser
 import com.example.crashcontrol.ui.CrashControlRoute
+import com.example.crashcontrol.ui.composables.BasicAlertDialog
+import com.example.crashcontrol.ui.composables.BasicTextButton
 import com.example.crashcontrol.ui.composables.DangerousCardEditor
 import com.example.crashcontrol.ui.composables.DialogCancelButton
 import com.example.crashcontrol.ui.composables.DialogConfirmButton
@@ -78,11 +81,20 @@ fun ProfileScreen(
 
             RegularCardEditor(
                 R.string.create_account,
-                Icons.Filled.Add,
+                ImageVector.vectorResource(id = R.drawable.baseline_person_add_alt_1_24),
                 "",
                 Modifier.padding(16.dp, 0.dp, 16.dp, 8.dp)
             ) {
                 navController.navigate(CrashControlRoute.SignUp.route)
+            }
+
+            BasicTextButton(
+                R.string.why_signup,
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, 8.dp, 16.dp, 0.dp)
+            ) {
+                // !TODO: Implement why sign up
             }
         } else {
             loadUser()
@@ -131,22 +143,24 @@ private fun SignOutCard(signOut: () -> Unit) {
     var showWarningDialog by remember { mutableStateOf(false) }
 
     RegularCardEditor(
-        R.string.sign_out, Icons.Outlined.ExitToApp, "", Modifier.padding(16.dp, 0.dp, 16.dp, 8.dp)
+        R.string.sign_out, Icons.Outlined.ExitToApp, "",
+        Modifier.padding(16.dp, 0.dp, 16.dp, 8.dp)
     ) {
         showWarningDialog = true
     }
 
     if (showWarningDialog) {
-        AlertDialog(title = { Text(stringResource(R.string.sign_out)) },
-            text = { Text(stringResource(R.string.sign_out_description)) },
-            dismissButton = { DialogCancelButton(R.string.cancel) { showWarningDialog = false } },
-            confirmButton = {
-                DialogConfirmButton(R.string.sign_out) {
-                    signOut()
-                    showWarningDialog = false
-                }
+        BasicAlertDialog(
+            onDismissRequest = { showWarningDialog = false },
+            onConfirmation = {
+                signOut()
+                showWarningDialog = false
             },
-            onDismissRequest = { showWarningDialog = false })
+            dialogTitle = stringResource(R.string.sign_out),
+            dialogText = stringResource(R.string.sign_out_description),
+            confimationText = R.string.cancel,
+            icon = Icons.Outlined.ExitToApp
+        )
     }
 }
 
@@ -155,15 +169,24 @@ private fun DeleteMyAccountCard(deleteMyAccount: () -> Unit) {
     var showWarningDialog by remember { mutableStateOf(false) }
 
     DangerousCardEditor(
-        R.string.delete_account,
-        Icons.Outlined.Close,
-        "",
+        R.string.delete_account, Icons.Outlined.Delete, "",
         Modifier.padding(16.dp, 0.dp, 16.dp, 8.dp)
     ) {
         showWarningDialog = true
     }
 
     if (showWarningDialog) {
+        BasicAlertDialog(
+            onDismissRequest = { showWarningDialog = false },
+            onConfirmation = {
+                deleteMyAccount()
+                showWarningDialog = false
+            },
+            dialogTitle = stringResource(R.string.delete_account),
+            dialogText = stringResource(R.string.delete_account_description),
+            confimationText = R.string.delete_account,
+            icon = Icons.Outlined.Delete
+        )
         AlertDialog(title = { Text(stringResource(R.string.delete_account)) },
             text = { Text(stringResource(R.string.delete_account_description)) },
             dismissButton = { DialogCancelButton(R.string.cancel) { showWarningDialog = false } },

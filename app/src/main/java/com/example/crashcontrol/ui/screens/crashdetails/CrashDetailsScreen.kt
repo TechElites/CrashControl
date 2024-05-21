@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -96,7 +95,8 @@ fun CrashDetailsScreen(
             .copy(zoomButtonVisibility = ZoomButtonVisibility.NEVER)
     }
 
-    val openAlertDialog = remember { mutableStateOf(false) }
+    val openFavouriteDialog = remember { mutableStateOf(false) }
+    var openDeleteDialog = remember { mutableStateOf(false) }
     val fav = remember { mutableStateOf(crash.favourite) }
 
     Scaffold(
@@ -107,30 +107,22 @@ fun CrashDetailsScreen(
                     onClick = {
                         fav.value = !fav.value
                         actions.setFavourite(fav.value)
-                        openAlertDialog.value = true
+                        openFavouriteDialog.value = true
                     }) {
                     Icon(
-                        Icons.Outlined.Favorite,
+                        if (fav.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         "Toggle favourites",
-                        tint = if (fav.value) {
-                            Color.Black
-                        } else {
-                            Color.White
-                        }
                     )
 
                 }
                 Spacer(Modifier.size(8.dp))
-                FloatingActionButton(containerColor = MaterialTheme.colorScheme.primary, onClick = {
-                    actions.deleteFBCrash()
-                    navController.navigateUp()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        onDelete()
-                    }, 1500)
-
-                }) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    onClick = {
+                        openDeleteDialog.value = true
+                    }) {
                     Icon(
-                        Icons.Outlined.Delete,
+                        Icons.Default.Delete,
                         "Delete crash",
                     )
                 }
@@ -216,20 +208,39 @@ fun CrashDetailsScreen(
         }
     }
     when {
-        openAlertDialog.value -> {
+        openFavouriteDialog.value -> {
             BasicAlertDialog(
                 onDismissRequest = {
                     fav.value = !fav.value
                     actions.setFavourite(fav.value)
-                    openAlertDialog.value = false
+                    openFavouriteDialog.value = false
                 },
                 onConfirmation = {
-                    openAlertDialog.value = false
+                    openFavouriteDialog.value = false
                     onSubmit()
                 },
-                dialogTitle = "Favourite crash",
-                dialogText = "Do you want to change the favourite status of this crash?",
-                icon = Icons.Default.DateRange
+                dialogTitle = ctx.getString(R.string.add_favourite),
+                dialogText = ctx.getString(R.string.add_favourite_text),
+                confimationText = R.string.confirm,
+                icon = Icons.Default.Favorite
+            )
+        }
+        openDeleteDialog.value -> {
+            BasicAlertDialog(
+                onDismissRequest = {
+                    openDeleteDialog.value = false
+                },
+                onConfirmation = {
+                    actions.deleteFBCrash()
+                    navController.navigateUp()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        onDelete()
+                    }, 1500)
+                },
+                dialogTitle = ctx.getString(R.string.delete_crash),
+                dialogText = ctx.getString(R.string.delete_crash_text),
+                confimationText = R.string.delete,
+                icon = Icons.Default.Delete
             )
         }
     }

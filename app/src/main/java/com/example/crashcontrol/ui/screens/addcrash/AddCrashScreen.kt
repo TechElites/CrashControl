@@ -60,7 +60,6 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 enum class Mode { Automatic, Manual }
 
@@ -249,6 +248,7 @@ fun AddCrashScreen(
                     },
                     dialogTitle = "Add to Calendar",
                     dialogText = "Do you want to add this crash to your calendar?",
+                    confimationText = R.string.confirm,
                     icon = Icons.Default.DateRange
                 )
             }
