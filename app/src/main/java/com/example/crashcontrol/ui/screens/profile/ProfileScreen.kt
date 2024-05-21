@@ -1,5 +1,6 @@
 package com.example.crashcontrol.ui.screens.profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,11 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +60,7 @@ fun ProfileScreen(
 ) {
     val ctx = LocalContext.current
     var user by remember { mutableStateOf<FBUser?>(null) }
+    var infoDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     fun loadUser() = coroutineScope.launch {
         user = actions.loadCurrentUser()
@@ -66,7 +70,8 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         if (state.isAnonymousAccount) {
@@ -94,7 +99,7 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .padding(16.dp, 8.dp, 16.dp, 0.dp)
             ) {
-                // !TODO: Implement why sign up
+                infoDialog = true
             }
         } else {
             loadUser()
@@ -135,6 +140,20 @@ fun ProfileScreen(
             SignOutCard { actions.signOut() }
             DeleteMyAccountCard { actions.deleteAccount() }
         }
+    }
+
+    if (infoDialog) {
+        AlertDialog(
+            onDismissRequest = { infoDialog = false },
+            icon = { Icon(Icons.Default.Info, contentDescription = "Info") },
+            title = { Text(stringResource(R.string.why_signup)) },
+            text = { Text(stringResource(R.string.why_signup_info)) },
+            confirmButton = {
+                DialogConfirmButton(R.string.close) {
+                    infoDialog = false
+                }
+            }
+        )
     }
 }
 

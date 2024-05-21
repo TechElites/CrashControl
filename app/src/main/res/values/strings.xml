@@ -84,4 +84,6 @@
     <string name="delete_crash_text">Are you sure you want to delete this crash?</string>
     <string name="delete">Delete</string>
     <string name="why_signup">Why signing up?</string>
+    <string name="close">Close</string>
+    <string name="why_signup_info">Having an account makes you able to share your latest crash with all the other users: adding it on the world map</string>
 </resources>

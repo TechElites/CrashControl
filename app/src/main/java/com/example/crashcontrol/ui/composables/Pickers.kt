@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -45,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -181,7 +181,8 @@ fun PositionPicker(
                 searchPlaces()
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.Search, contentDescription = "Icon"
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = "Search"
                 )
             }
         }
@@ -191,7 +192,8 @@ fun PositionPicker(
                 requestLocation()
             }) {
                 Icon(
-                    imageVector = Icons.Outlined.LocationOn, contentDescription = "Icon"
+                    painter = painterResource(id = R.drawable.baseline_my_location_24),
+                    contentDescription = "Location"
                 )
             }
         }

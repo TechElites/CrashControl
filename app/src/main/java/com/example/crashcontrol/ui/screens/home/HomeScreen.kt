@@ -131,7 +131,7 @@ fun HomeScreen(state: CrashesState, navController: NavHostController, favourites
             Column(
             ) {
                 Text(
-                    text = "Filter crashes by direction",
+                    text = "Filter crashes by landing face",
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(16.dp)
                 )
