@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -45,8 +44,6 @@ import com.example.crashcontrol.data.remote.FBUser
 import com.example.crashcontrol.ui.CrashControlRoute
 import com.example.crashcontrol.ui.composables.BasicAlertDialog
 import com.example.crashcontrol.ui.composables.BasicTextButton
-import com.example.crashcontrol.ui.composables.DangerousCardEditor
-import com.example.crashcontrol.ui.composables.DialogCancelButton
 import com.example.crashcontrol.ui.composables.DialogConfirmButton
 import com.example.crashcontrol.ui.composables.RegularCardEditor
 import kotlinx.coroutines.launch
@@ -138,7 +135,6 @@ fun ProfileScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
             SignOutCard { actions.signOut() }
-            DeleteMyAccountCard { actions.deleteAccount() }
         }
     }
 
@@ -180,41 +176,5 @@ private fun SignOutCard(signOut: () -> Unit) {
             confimationText = R.string.cancel,
             icon = Icons.Outlined.ExitToApp
         )
-    }
-}
-
-@Composable
-private fun DeleteMyAccountCard(deleteMyAccount: () -> Unit) {
-    var showWarningDialog by remember { mutableStateOf(false) }
-
-    DangerousCardEditor(
-        R.string.delete_account, Icons.Outlined.Delete, "",
-        Modifier.padding(16.dp, 0.dp, 16.dp, 8.dp)
-    ) {
-        showWarningDialog = true
-    }
-
-    if (showWarningDialog) {
-        BasicAlertDialog(
-            onDismissRequest = { showWarningDialog = false },
-            onConfirmation = {
-                deleteMyAccount()
-                showWarningDialog = false
-            },
-            dialogTitle = stringResource(R.string.delete_account),
-            dialogText = stringResource(R.string.delete_account_description),
-            confimationText = R.string.delete_account,
-            icon = Icons.Outlined.Delete
-        )
-        AlertDialog(title = { Text(stringResource(R.string.delete_account)) },
-            text = { Text(stringResource(R.string.delete_account_description)) },
-            dismissButton = { DialogCancelButton(R.string.cancel) { showWarningDialog = false } },
-            confirmButton = {
-                DialogConfirmButton(R.string.delete_account) {
-                    deleteMyAccount()
-                    showWarningDialog = false
-                }
-            },
-            onDismissRequest = { showWarningDialog = false })
     }
 }

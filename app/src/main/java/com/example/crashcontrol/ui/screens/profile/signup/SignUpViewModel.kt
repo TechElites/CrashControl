@@ -105,7 +105,7 @@ class SignUpViewModel(
 
         override fun signUp() {
             launchCatching {
-                accountService.linkAccount(email, password)
+                accountService.createAccount(email, password)
                 fbDataSource.saveUser(accountService.currentUserId, _state.value.toFBUser())
             }
         }

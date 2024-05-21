@@ -18,8 +18,6 @@
     <string name="current_position">Current position</string>
     <string name="date">Date</string>
     <string name="debug">Debug</string>
-    <string name="delete_account">Delete my account</string>
-    <string name="delete_account_description">Are you sure you want to delete your account?</string>
     <string name="dismiss">Dismiss</string>
     <string name="down">Down</string>
     <string name="email">Email</string>

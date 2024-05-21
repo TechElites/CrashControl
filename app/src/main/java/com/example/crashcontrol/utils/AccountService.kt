@@ -55,18 +55,11 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         auth.sendPasswordResetEmail(email).await()
     }
 
-    suspend fun linkAccount(email: String, password: String) {
+    suspend fun createAccount(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
     }
 
-    suspend fun deleteAccount() {
-        auth.currentUser!!.delete().await()
-    }
-
-    suspend fun signOut() {
-        if (auth.currentUser!!.isAnonymous) {
-            auth.currentUser!!.delete()
-        }
+    fun signOut() {
         auth.signOut()
     }
 }
