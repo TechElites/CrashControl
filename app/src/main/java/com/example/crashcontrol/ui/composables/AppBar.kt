@@ -45,7 +45,10 @@ fun AppBar(
         actions = {
             if (currentRoute.route == CrashControlRoute.Settings.route) {
                 IconButton(onClick = { navController.navigate(CrashControlRoute.Debug.route) }) {
-                    Icon(painter = painterResource(id = R.drawable.baseline_bug_report_24), contentDescription = "Debug")
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bug_report_24),
+                        contentDescription = "Debug"
+                    )
                 }
             }
             if (currentRoute.route == CrashControlRoute.Debug.route) {
@@ -57,8 +60,14 @@ fun AppBar(
                 IconButton(onClick = { navController.navigate(CrashControlRoute.Favourites.route) }) {
                     Icon(Icons.Default.Favorite, "Favourites")
                 }
+                IconButton(onClick = { navController.navigate(CrashControlRoute.Graphs.route) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bar_chart_24),
+                        "Graphs"
+                    )
+                }
             }
-            if (currentRoute.route == CrashControlRoute.Favourites.route) {
+            if (currentRoute.route == CrashControlRoute.Favourites.route || currentRoute.route == CrashControlRoute.Graphs.route) {
                 IconButton(onClick = { navController.navigate(CrashControlRoute.Home.route) }) {
                     Icon(Icons.Default.Home, contentDescription = "Home")
                 }

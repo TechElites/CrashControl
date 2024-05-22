@@ -13,6 +13,7 @@
     <string name="crash_notification_message">Did your phone just crashed on the ground?! Tell us what you think about it.</string>
     <string name="crash_notification_title">Oh no!</string>
     <string name="crash_title">F*ck!</string>
+    <string name="graphs">Stats</string>
     <string name="crashes">Crashes</string>
     <string name="crashes_map">Crashes Map</string>
     <string name="current_position">Current position</string>
@@ -84,4 +85,6 @@
     <string name="why_signup">Why signing up?</string>
     <string name="close">Close</string>
     <string name="why_signup_info">Having an account makes you able to share your latest crash with all the other users: adding it on the world map</string>
+    <string name="no_crashes_graph">Start crashing to see your stats!</string>
+    <string name="faces_graph_title">Where will it crash next time?</string>
 </resources>

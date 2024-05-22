@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.remote.FBDataSource
+import com.example.crashcontrol.ui.screens.graphs.GraphsScreen
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashScreen
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashViewModel
 import com.example.crashcontrol.ui.screens.crashdetails.CrashDetailsScreen
@@ -67,6 +68,8 @@ sealed class CrashControlRoute(
 
     data object Favourites : CrashControlRoute("favourites", R.string.favourites)
 
+    data object Graphs : CrashControlRoute("graphs", R.string.graphs)
+
     companion object {
         val routes =
             setOf(
@@ -79,7 +82,8 @@ sealed class CrashControlRoute(
                 SignIn,
                 SignUp,
                 Debug,
-                Favourites
+                Favourites,
+                Graphs
             )
     }
 }
@@ -194,6 +198,11 @@ fun CrashControlNavGraph(
         with(CrashControlRoute.Favourites) {
             composable(route) {
                 HomeScreen(crashesState, navController, true)
+            }
+        }
+        with(CrashControlRoute.Graphs) {
+            composable(route) {
+                GraphsScreen(crashesState.crashes)
             }
         }
     }
