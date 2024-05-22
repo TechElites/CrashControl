@@ -2,9 +2,11 @@ package com.example.crashcontrol.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
@@ -34,7 +36,9 @@ fun SideMenu(
     currentRoute: CrashControlRoute,
     onItemClick: () -> Unit
 ) {
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        modifier = Modifier.width(300.dp),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -50,18 +54,6 @@ fun SideMenu(
             )
         }
         Divider()
-        NavigationDrawerItem(
-            label = { Text(text = stringResource(R.string.go_back), fontSize = 20.sp) },
-            selected = false,
-            onClick = { navController.navigateUp(); onItemClick(); },
-            modifier = Modifier.padding(top = 10.dp, start = 10.dp, end = 10.dp),
-            icon = {
-                Icon(
-                    Icons.Filled.ArrowBack, contentDescription = "Back",
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-        )
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.home_page), fontSize = 20.sp) },
             selected = currentRoute == CrashControlRoute.Home,
@@ -111,5 +103,20 @@ fun SideMenu(
                 )
             }
         )
+        Spacer(modifier = Modifier.weight(1f))
+        if (navController.previousBackStackEntry != null) {
+            NavigationDrawerItem(
+                label = { Text(text = stringResource(R.string.go_back), fontSize = 20.sp) },
+                selected = false,
+                onClick = { navController.navigateUp(); onItemClick(); },
+                modifier = Modifier.padding(10.dp),
+                icon = {
+                    Icon(
+                        Icons.Filled.ArrowBack, contentDescription = "Back",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            )
+        }
     }
 }

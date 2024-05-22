@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         },
-                        gesturesEnabled = false
+                        gesturesEnabled = currentRoute.route != CrashControlRoute.CrashesMap.route
                     ) {
                         Scaffold(
                             topBar = {
