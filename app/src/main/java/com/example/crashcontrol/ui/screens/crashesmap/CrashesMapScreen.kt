@@ -131,7 +131,7 @@ fun CrashesMapScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .size(100.dp)
+                            .size(130.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(7.dp)),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
