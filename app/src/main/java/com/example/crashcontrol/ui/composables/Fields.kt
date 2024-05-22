@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -129,8 +128,8 @@ private fun PasswordField(
     var isVisible by remember { mutableStateOf(false) }
 
     val icon =
-        if (isVisible) Icons.Filled.Check
-        else Icons.Filled.Info
+        if (isVisible) painterResource(id = R.drawable.baseline_check_24)
+        else painterResource(id = R.drawable.baseline_remove_red_eye_24)
 
     val visualTransformation =
         if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
@@ -147,7 +146,7 @@ private fun PasswordField(
             leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
             trailingIcon = {
                 IconButton(onClick = { isVisible = !isVisible }) {
-                    Icon(icon, contentDescription = "Visibility")
+                    Icon(painter = icon, contentDescription = "Visibility")
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

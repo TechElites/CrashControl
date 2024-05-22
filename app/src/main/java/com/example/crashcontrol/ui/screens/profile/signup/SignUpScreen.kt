@@ -29,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -54,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavHostController
@@ -119,7 +119,7 @@ fun SignUpScreen(
                 .fillMaxWidth()
                 .padding(16.dp, 4.dp)
             Button(onClick = { takePicture() }, modifier = fieldModifier, enabled = !pictureTaken) {
-                Icon(imageVector = Icons.Default.Person, contentDescription = "Camera")
+                Icon(painter = painterResource(id = R.drawable.baseline_add_a_photo_24), contentDescription = "Camera")
                 Text(text = "Take picture")
             }
             if (cameraLauncher.capturedImageUri.path?.isNotEmpty() == true) {
