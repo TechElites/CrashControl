@@ -187,7 +187,9 @@ fun CrashDetailsScreen(
                 crash.exclamation,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = MaterialTheme.typography.titleLarge,
-                fontSize = 30.sp
+                fontSize = 30.sp,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center
             )
             Text(
                 crash.date,

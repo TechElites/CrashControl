@@ -18,6 +18,7 @@ package com.example.crashcontrol.ui.screens.profile.signup
 
 import android.Manifest
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -140,12 +142,20 @@ fun SignUpScreen(
                     )
                 }
             } else {
+                //Toast.makeText(ctx, "No image", Toast.LENGTH_SHORT).show()
                 Card(
                     modifier = Modifier
                         .size(150.dp)
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(80.dp),
-                ) {}
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_person_24),
+                        contentDescription = "Default image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
             EmailField(state.email, actions::setEmail, fieldModifier)
             BasicField(R.string.username, state.username, actions::setUsername, fieldModifier)

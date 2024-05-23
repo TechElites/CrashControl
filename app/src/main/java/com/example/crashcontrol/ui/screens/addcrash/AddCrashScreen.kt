@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
@@ -99,6 +100,7 @@ fun AddCrashScreen(
             putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin)
             putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
         }
+        //startActivityForResult(ctx as MainActivity, intent, 0, null)
         startActivity(ctx, intent, null)
     }
 
