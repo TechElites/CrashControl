@@ -173,7 +173,7 @@ private fun SignOutCard(signOut: () -> Unit) {
             },
             dialogTitle = stringResource(R.string.sign_out),
             dialogText = stringResource(R.string.sign_out_description),
-            confimationText = R.string.cancel,
+            confimationText = R.string.sign_out,
             icon = Icons.Outlined.ExitToApp
         )
     }
