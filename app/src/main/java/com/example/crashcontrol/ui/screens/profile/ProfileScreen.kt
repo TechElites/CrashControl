@@ -1,5 +1,6 @@
 package com.example.crashcontrol.ui.screens.profile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -112,6 +114,20 @@ fun ProfileScreen(
                             ImageRequest.Builder(ctx).data(user!!.picture.toUri())
                                 .crossfade(true).build(),
                             "Captured image",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                } else {
+                    Card(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(80.dp),
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_person_24),
+                            contentDescription = "Default image",
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )

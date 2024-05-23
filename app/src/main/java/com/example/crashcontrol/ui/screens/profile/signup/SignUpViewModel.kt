@@ -28,8 +28,7 @@ data class SignUpState(
             username.isEmpty()
                     ||name.isEmpty()
                     || surname.isEmpty()
-                    || birthday.isEmpty()
-                    || picture.isEmpty() -> R.string.empty_fields_error
+                    || birthday.isEmpty() -> R.string.empty_fields_error
             password.isEmpty() || !password.isValidPassword() -> R.string.password_error
             repeatPassword.isEmpty() || !password.passwordMatches(repeatPassword) -> R.string.password_match_error
             else -> null

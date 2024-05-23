@@ -136,7 +136,11 @@ fun CrashesMapScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = it.title)
+                        Text(
+                            text = it.title,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            textAlign = TextAlign.Center
+                        )
                         Text(text = it.snippet, fontSize = 10.sp)
                         Text(text = crashes.value[i].username, fontSize = 10.sp)
                     }
