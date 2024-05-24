@@ -26,10 +26,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -61,6 +64,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -138,34 +142,38 @@ fun SignUpScreen(
             val fieldModifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 4.dp)
-            Button(
-                onClick = {
-                    cameraLauncher.capturedImageUri = Uri.EMPTY
-                    takePicture()
-                }, modifier = fieldModifier, enabled = !pictureTaken
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_add_a_photo_24),
-                    contentDescription = "Camera"
-                )
-                Text(text = "Take picture")
+            Row {
+
+
+                Button(
+                    onClick = {
+                        cameraLauncher.capturedImageUri = Uri.EMPTY
+                        takePicture()
+                    }, modifier = Modifier.width(170.dp), enabled = !pictureTaken
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_add_a_photo_24),
+                        contentDescription = "Camera"
+                    )
+                    Text(text = "Take picture")
+                }
+                Spacer(Modifier.size(16.dp))
+                Button(
+                    onClick = {
+                        cameraLauncher.capturedImageUri = Uri.EMPTY
+                        val intent = Intent(Intent.ACTION_PICK).apply {
+                            type = "image/*"
+                        }
+                        pickMedia.launch(intent)
+                    }, modifier = Modifier.width(170.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_photo_library_24),
+                        contentDescription = "Gallery"
+                    )
+                    Text(text = "Gallery")
+                }
             }
-            Button(
-                onClick = {
-                    cameraLauncher.capturedImageUri = Uri.EMPTY
-                    val intent = Intent(Intent.ACTION_PICK).apply {
-                        type = "image/*"
-                    }
-                    pickMedia.launch(intent)
-                }, modifier = fieldModifier
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_photo_library_24),
-                    contentDescription = "Gallery"
-                )
-                Text(text = "Gallery")
-            }
-            Text(text = "Selected URI: ${state.picture}")
             if (selectedImageUri != null) {
                 Card(
                     modifier = Modifier
