@@ -17,7 +17,12 @@ limitations under the License.
 package com.example.crashcontrol.ui.screens.profile.signup
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
@@ -90,7 +94,7 @@ fun SignUpScreen(
 
     var pictureTaken by remember { mutableStateOf(false) }
 
-    val cameraLauncher = rememberCameraLauncher { imageUri ->
+    var cameraLauncher = rememberCameraLauncher { imageUri ->
         saveImageToStorage(imageUri, ctx.applicationContext.contentResolver)
     }
 
@@ -108,6 +112,20 @@ fun SignUpScreen(
         cameraPermission.launchPermissionRequest()
     }
 
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val pickMedia =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                selectedImageUri = result.data?.data
+                selectedImageUri?.let {
+                    // Do something with the selected image URI
+                    selectedImageUri = it
+                    actions.setPicture(it.toString())
+                }
+            }
+        }
+
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { innerPadding ->
         Column(
             modifier = Modifier
@@ -120,13 +138,35 @@ fun SignUpScreen(
             val fieldModifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 4.dp)
-            Button(onClick = { takePicture() }, modifier = fieldModifier, enabled = !pictureTaken) {
-                Icon(painter = painterResource(id = R.drawable.baseline_add_a_photo_24), contentDescription = "Camera")
+            Button(
+                onClick = {
+                    cameraLauncher.capturedImageUri = Uri.EMPTY
+                    takePicture()
+                }, modifier = fieldModifier, enabled = !pictureTaken
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_add_a_photo_24),
+                    contentDescription = "Camera"
+                )
                 Text(text = "Take picture")
             }
-            if (cameraLauncher.capturedImageUri.path?.isNotEmpty() == true) {
-                pictureTaken = true
-                actions.setPicture(cameraLauncher.capturedImageUri.toString())
+            Button(
+                onClick = {
+                    cameraLauncher.capturedImageUri = Uri.EMPTY
+                    val intent = Intent(Intent.ACTION_PICK).apply {
+                        type = "image/*"
+                    }
+                    pickMedia.launch(intent)
+                }, modifier = fieldModifier
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_photo_library_24),
+                    contentDescription = "Gallery"
+                )
+                Text(text = "Gallery")
+            }
+            Text(text = "Selected URI: ${state.picture}")
+            if (selectedImageUri != null) {
                 Card(
                     modifier = Modifier
                         .size(150.dp)
@@ -134,15 +174,13 @@ fun SignUpScreen(
                     shape = RoundedCornerShape(80.dp),
                 ) {
                     AsyncImage(
-                        ImageRequest.Builder(ctx).data(cameraLauncher.capturedImageUri)
-                            .crossfade(true).build(),
+                        ImageRequest.Builder(ctx).data(selectedImageUri).crossfade(true).build(),
                         "Captured image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
                 }
             } else {
-                //Toast.makeText(ctx, "No image", Toast.LENGTH_SHORT).show()
                 Card(
                     modifier = Modifier
                         .size(150.dp)
@@ -156,6 +194,11 @@ fun SignUpScreen(
                         contentScale = ContentScale.Crop
                     )
                 }
+            }
+            if (cameraLauncher.capturedImageUri.path?.isNotEmpty() == true) {
+                pictureTaken = true
+                selectedImageUri = cameraLauncher.capturedImageUri
+                actions.setPicture(cameraLauncher.capturedImageUri.toString())
             }
             EmailField(state.email, actions::setEmail, fieldModifier)
             BasicField(R.string.username, state.username, actions::setUsername, fieldModifier)

@@ -14,7 +14,7 @@ import androidx.core.content.FileProvider
 import java.io.File
 
 interface CameraLauncher {
-    val capturedImageUri: Uri
+    var capturedImageUri: Uri
     fun captureImage()
 }
 
@@ -36,7 +36,7 @@ fun rememberCameraLauncher(onPictureTaken: (imageUri: Uri) -> Unit = {}): Camera
     val cameraLauncher by remember {
         derivedStateOf {
             object : CameraLauncher {
-                override val capturedImageUri = capturedImageUri
+                override var capturedImageUri = capturedImageUri
                 override fun captureImage() = cameraActivityLauncher.launch((imageUri))
             }
         }
