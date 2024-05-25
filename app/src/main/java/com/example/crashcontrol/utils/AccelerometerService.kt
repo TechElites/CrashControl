@@ -14,8 +14,6 @@ import androidx.core.content.ContextCompat.getString
 import com.example.crashcontrol.CrashActivity
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
-import java.text.DateFormat.getDateInstance
-import java.text.DateFormat.getTimeInstance
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Random
@@ -47,21 +45,19 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
         }
     }
 
-    fun StopService() {
+    fun stopService() {
         sensorManager.unregisterListener(this)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
-    /**
-     * @author Tomislav Curis
-     */
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             movementStart = System.currentTimeMillis()
             currentValues = AccelerationAxis(
                 x = event.values[0], y = event.values[1], z = event.values[2]
             )
+            // @author Tomislav Curis
             val loAccelerationReader = sqrt(
                 currentValues.x.toDouble().pow(2.0) + currentValues.y.toDouble()
                     .pow(2.0) + currentValues.z.toDouble().pow(2.0)
@@ -70,10 +66,8 @@ class AccelerometerService(private val ctx: Context) : SensorEventListener {
             //val ldAccRound: Double? = (precision.format(loAccelerationReader)).toDoubleOrNull()
             val ldAccRound: Double = loAccelerationReader
             // precision/fall detection and more than 1000ms after last fall
-            if (ldAccRound != null) {
-                if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
-                    crash()
-                }
+            if (ldAccRound > 0.3 && ldAccRound < 1.2 && (movementStart - lastMovementCrash) > 1000) {
+                crash()
             }
         }
     }

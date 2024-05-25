@@ -108,6 +108,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        accelerometer.StopService()
+        accelerometer.stopService()
     }
 }
