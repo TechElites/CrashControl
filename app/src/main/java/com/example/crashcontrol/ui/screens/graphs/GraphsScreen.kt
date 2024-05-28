@@ -54,12 +54,12 @@ fun GraphsScreen(
             val faces = crashes.groupBy { it.face }.map { it.key }
             val crashesPerFace = crashes.groupBy { it.face }.map { it.value.size.toFloat() }
             val barChartData = mutableListOf<BarChartEntity>()
-            crashesPerFace.forEachIndexed { index, crash ->
-                barChartData.add(BarChartEntity(crash, colors[index], faces[index]))
-            }
-            for (impactFace in impactFaces) {
-                if (!faces.contains(impactFace)) {
-                    barChartData.add(BarChartEntity(0f, colors[faces.size], impactFace))
+            impactFaces.forEachIndexed { index, face ->
+                if (faces.contains(face)) {
+                    val i = faces.indexOf(face)
+                    barChartData.add(BarChartEntity(crashesPerFace[i], colors[index], faces[i]))
+                } else {
+                    barChartData.add(BarChartEntity(0f, colors[index], face))
                 }
             }
             val barVerticalAxisValues =
