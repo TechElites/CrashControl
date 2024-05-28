@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crashcontrol.R
 import com.example.crashcontrol.data.database.Crash
+import com.example.crashcontrol.data.models.ImpactFace
 import com.mahmoud.composecharts.barchart.BarChart
 import com.mahmoud.composecharts.barchart.BarChartEntity
 
@@ -49,11 +50,17 @@ fun GraphsScreen(
             val colors = listOf(
                 Color.Blue, Color.Red, Color.Green, Color.Yellow, Color.Magenta, Color.Cyan
             )
+            val impactFaces = ImpactFace().toList().map { stringResource(it) }
             val faces = crashes.groupBy { it.face }.map { it.key }
             val crashesPerFace = crashes.groupBy { it.face }.map { it.value.size.toFloat() }
             val barChartData = mutableListOf<BarChartEntity>()
             crashesPerFace.forEachIndexed { index, crash ->
                 barChartData.add(BarChartEntity(crash, colors[index], faces[index]))
+            }
+            for (impactFace in impactFaces) {
+                if (!faces.contains(impactFace)) {
+                    barChartData.add(BarChartEntity(0f, colors[faces.size], impactFace))
+                }
             }
             val barVerticalAxisValues =
                 (0..crashesPerFace.max().toInt()).map { it.toFloat() }

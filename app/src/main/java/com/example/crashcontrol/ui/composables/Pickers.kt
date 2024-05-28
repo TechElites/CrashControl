@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.crashcontrol.R
+import com.example.crashcontrol.data.models.ImpactFace
 import com.example.crashcontrol.data.remote.OSMDataSource
 import com.example.crashcontrol.data.remote.OSMPlace
 import com.example.crashcontrol.ui.screens.addcrash.AddCrashActions
@@ -298,9 +299,7 @@ fun FacePicker(
 ) {
     val ctx = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-    val options = listOf(
-        R.string.left, R.string.right, R.string.up, R.string.down, R.string.front, R.string.back
-    )
+    val options = ImpactFace().toList()
     var selectedOption by remember { mutableStateOf(ctx.getString(options[0])) }
 
     Box {
