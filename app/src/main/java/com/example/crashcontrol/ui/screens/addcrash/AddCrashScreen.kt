@@ -1,9 +1,11 @@
 package com.example.crashcontrol.ui.screens.addcrash
 
+import android.app.Activity
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.provider.CalendarContract
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,9 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import com.example.crashcontrol.MainActivity
 import com.example.crashcontrol.R
@@ -89,6 +89,20 @@ fun AddCrashScreen(
 
     val ctx = LocalContext.current
 
+    var resultText by remember { mutableStateOf("No Result") }
+
+    val activityResultLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(),
+            onResult = { result: ActivityResult ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    result.data?.let { data ->
+                        resultText = data.getStringExtra("key") ?: "No Result Data"
+                    }
+                } else {
+                    resultText = "No Result 2"
+                }
+            })
+
     fun addEvent(title: String, exclamation: String, location: String, begin: Long, end: Long) {
         val intent = Intent(Intent.ACTION_INSERT).apply {
             data = CalendarContract.Events.CONTENT_URI
@@ -101,7 +115,9 @@ fun AddCrashScreen(
             putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end)
         }
         //startActivityForResult(ctx as MainActivity, intent, 0, null)
-        startActivity(ctx, intent, null)
+        //val intent = Intent(ctx, MainActivity::class.java)
+        activityResultLauncher.launch(intent)
+        //startActivity(ctx, intent, null)
     }
 
     val openAlertDialog = remember { mutableStateOf(false) }
@@ -169,6 +185,7 @@ fun AddCrashScreen(
                     value = state.face, onValueChange = actions::setFace, mode = mode
                 )
             }
+            Text(text = (resultText))
 
             if (showDatePicker) {
                 DatePickerDialog(onDismissRequest = { /*TODO*/ }, confirmButton = {
@@ -218,16 +235,15 @@ fun AddCrashScreen(
         }
         when {
             openAlertDialog.value -> {
-                BasicAlertDialog(
-                    onDismissRequest = {
-                        openAlertDialog.value = false
-                        if (mode == Mode.Manual && navController != null) {
-                            navController.navigateUp()
-                        } else {
-                            val intent = Intent(ctx, MainActivity::class.java)
-                            ctx.startActivity(intent)
-                        }
-                    },
+                BasicAlertDialog(onDismissRequest = {
+                    openAlertDialog.value = false
+                    if (mode == Mode.Manual && navController != null) {
+                        navController.navigateUp()
+                    } else {
+                        val intent = Intent(ctx, MainActivity::class.java)
+                        ctx.startActivity(intent)
+                    }
+                },
                     onConfirmation = {
                         openAlertDialog.value = false
                         addEvent(
@@ -244,10 +260,10 @@ fun AddCrashScreen(
                         if (mode == Mode.Manual && navController != null) {
                             navController.navigateUp()
                         } else {
-                            val intent = Intent(ctx, MainActivity::class.java)
+                            /*val intent = Intent(ctx, MainActivity::class.java)
                             Handler(Looper.getMainLooper()).postDelayed({
                                 ctx.startActivity(intent)
-                            }, 1500)
+                            }, 1500)*/
                         }
                     },
                     dialogTitle = "Add to Calendar",
@@ -258,6 +274,12 @@ fun AddCrashScreen(
             }
         }
     }
+
+    if (resultText != "No Result") {
+        val intent = Intent(ctx, MainActivity::class.java)
+        ctx.startActivity(intent)
+    }
+
     if (showWrongInputAlert) {
         LaunchedEffect(snackbarHostState) {
             snackbarHostState.showSnackbar(
