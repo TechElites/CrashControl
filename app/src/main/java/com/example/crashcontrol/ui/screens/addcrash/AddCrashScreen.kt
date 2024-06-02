@@ -185,7 +185,7 @@ fun AddCrashScreen(
                     value = state.face, onValueChange = actions::setFace, mode = mode
                 )
             }
-            Text(text = (resultText))
+            //Text(text = (resultText))
 
             if (showDatePicker) {
                 DatePickerDialog(onDismissRequest = { /*TODO*/ }, confirmButton = {
