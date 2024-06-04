@@ -25,7 +25,11 @@ class OSMDataSource(
     private val baseUrl = "https://nominatim.openstreetmap.org"
     suspend fun searchPlaces(query: String): List<OSMPlace> {
         val url = "$baseUrl/?q=$query&format=json&limit=1"
-        return httpClient.get(url).body()
+        return try {
+            httpClient.get(url).body()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     suspend fun getPlace(coordinates: Coordinates): OSMPlace {
